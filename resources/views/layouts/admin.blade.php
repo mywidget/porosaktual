@@ -48,7 +48,7 @@
             @endphp
 
             @foreach($adminNav as $item)
-                @if(auth()->user()->can($item['permission']))
+                @if(auth()->user()->hasPermissionTo($item['permission']))
                     @php
                         $isActive = request()->routeIs(basename($item['route']) . '*') || request()->routeIs($item['route']);
                     @endphp
