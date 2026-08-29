@@ -4,13 +4,14 @@
 
 @push('meta')
     <meta name="description" content="{{ $post->meta_description ?? Str::limit(strip_tags($post->excerpt ?? $post->content), 160) }}">
-    <meta property="og:title" content="{{ $post->title }}">
+    <meta name="keywords" content="{{ $post->meta_keywords ?? $post->tags->pluck('name')->implode(', ') }}">
+    <meta property="og:title" content="{{ $post->meta_title ?? $post->title }}">
     <meta property="og:description" content="{{ $post->meta_description ?? Str::limit(strip_tags($post->excerpt ?? $post->content), 160) }}">
     <meta property="og:image" content="{{ $post->featured_image_url }}">
     <meta property="og:type" content="article">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ $post->title }}">
+    <meta name="twitter:title" content="{{ $post->meta_title ?? $post->title }}">
     <meta name="twitter:description" content="{{ $post->meta_description ?? Str::limit(strip_tags($post->excerpt ?? $post->content), 160) }}">
     <meta name="twitter:image" content="{{ $post->featured_image_url }}">
     @if($post->published_at)

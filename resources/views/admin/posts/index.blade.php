@@ -113,9 +113,7 @@
                             <td class="px-6 py-4">
                                 <div class="flex items-center">
                                     <div class="h-12 w-16 bg-gray-200 dark:bg-gray-700 rounded-lg flex-shrink-0 overflow-hidden">
-                                        @if($post->featured_image)
-                                            <img src="{{ asset('storage/' . $post->featured_image) }}" class="h-12 w-16 object-cover" alt="">
-                                        @endif
+                                            <img src="{{ $post->featured_image_url }}" class="h-12 w-16 object-cover" alt="">
                                     </div>
                                     <div class="ml-3">
                                         <a href="{{ route('admin.posts.edit', $post) }}" class="text-sm font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 max-w-xs truncate block">{{ $post->title }}</a>
@@ -140,7 +138,7 @@
                                 <div class="flex items-center justify-end space-x-2">
                                     @if($post->status !== 'published')
                                         <form method="POST" action="{{ route('admin.posts.publish', $post) }}">
-                                            @csrf @method('PATCH')
+                                            @csrf
                                             <button type="submit" class="p-1.5 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition" title="Publish">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                             </button>
@@ -201,9 +199,22 @@
     }
 
     function setBulkAction(action) {
-        if (!confirm(action === 'delete' ? 'Yakin ingin menghapus berita yang dipilih?' : 'Lanjutkan aksi ini?')) return;
-        actionInput.value = action;
-        document.getElementById('bulk-action-form').submit();
+        const text = action === 'delete' ? 'Yakin ingin menghapus berita yang dipilih?' : 'Lanjutkan aksi ini?';
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: text,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                actionInput.value = action;
+                document.getElementById('bulk-action-form').submit();
+            }
+        });
     }
 </script>
 @endpush

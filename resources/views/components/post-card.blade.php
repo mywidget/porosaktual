@@ -1,7 +1,6 @@
 @props(['post'])
 
 <article class="rounded-xl overflow-hidden bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] group">
-            @if($post->featured_image)
         <div class="relative overflow-hidden">
             <img
                 src="{{ $post->featured_image_url }}"
@@ -15,14 +14,8 @@
                 </div>
             @endif
         </div>
-    @endif
 
     <div class="p-5">
-        @if(!$post->featured_image && $post->category)
-            <div class="mb-3">
-                <x-category-badge :category="$post->category" />
-            </div>
-        @endif
 
         <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
             <a href="{{ route('post.show', $post->slug) }}">

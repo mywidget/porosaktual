@@ -64,6 +64,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 
     Route::resource('categories', AdminCategoryController::class);
     Route::resource('tags', AdminTagController::class);
+    Route::get('tags-search', [AdminTagController::class, 'search'])->name('tags.search');
+    Route::post('tags-create', [AdminTagController::class, 'storeAjax'])->name('tags.storeAjax');
     Route::resource('users', UserController::class);
     Route::resource('pages', AdminPageController::class);
     Route::resource('advertisements', AdvertisementController::class);

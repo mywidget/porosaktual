@@ -166,9 +166,7 @@
                             <td class="px-6 py-4">
                                 <div class="flex items-center">
                                     <div class="h-10 w-10 bg-gray-200 dark:bg-gray-700 rounded-lg flex-shrink-0 overflow-hidden">
-                                        @if($post->featured_image)
-                                            <img src="{{ asset('storage/' . $post->featured_image) }}" class="h-10 w-10 object-cover" alt="">
-                                        @endif
+                                        <img src="{{ $post->featured_image_url }}" class="h-10 w-10 object-cover" alt="">
                                     </div>
                                     <div class="ml-3">
                                         <p class="text-sm font-medium text-gray-900 dark:text-white max-w-xs truncate">{{ $post->title }}</p>

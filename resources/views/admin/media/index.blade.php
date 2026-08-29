@@ -61,12 +61,9 @@
                             <button type="button" @click.stop="copyUrl('{{ asset('storage/' . $item->file_path) }}')" class="p-2 bg-white/90 dark:bg-gray-800/90 rounded-full text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 transition">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                             </button>
-                            <form method="POST" action="{{ route('admin.media.destroy', $item) }}" onsubmit="return confirm('Yakin ingin menghapus file ini?')" onclick="event.stopPropagation()">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="p-2 bg-red-500/90 text-white rounded-full hover:bg-red-600 transition">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                </button>
-                            </form>
+                            <button type="button" @click.stop="confirmDelete({{ $item->id }}, '{{ asset('storage/' . $item->file_path) }}', '{{ addslashes($item->file_name) }}')" class="p-2 bg-red-500/90 text-white rounded-full hover:bg-red-600 transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
                         </div>
                     </div>
                     <div class="p-2">
@@ -129,13 +126,13 @@
                     if (xhr.status === 200) {
                         location.reload();
                     } else {
-                        alert('Upload gagal. Silakan coba lagi.');
+                        Swal.fire({ icon: 'error', title: 'Gagal', text: 'Upload gagal. Silakan coba lagi.' });
                     }
                 };
 
                 xhr.onerror = () => {
                     this.uploading = false;
-                    alert('Upload gagal. Silakan coba lagi.');
+                    Swal.fire({ icon: 'error', title: 'Gagal', text: 'Upload gagal. Silakan coba lagi.' });
                 };
 
                 xhr.send(formData);
@@ -143,19 +140,63 @@
 
             copyUrl(url) {
                 navigator.clipboard.writeText(url).then(() => {
-                    alert('URL berhasil disalin!');
+                    Swal.fire({ icon: 'success', title: 'Berhasil', text: 'URL berhasil disalin!', timer: 1500, showConfirmButton: false });
+                });
+            },
+
+            confirmDelete(id, url, fileName) {
+                Swal.fire({
+                    title: 'Hapus File?',
+                    html: `Yakin ingin menghapus <strong>${fileName}</strong>?`,
+                    imageUrl: url,
+                    imageWidth: 200,
+                    imageHeight: 120,
+                    imageAlt: fileName,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc2626',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '/admin/media/' + id;
+                        form.innerHTML = '<input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="_method" value="DELETE">';
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
                 });
             },
 
             deleteSelected() {
-                if (!confirm(`Hapus ${this.selected.length} file yang dipilih?`)) return;
-                this.selected.forEach(id => {
-                    fetch(`/admin/media/${id}`, {
-                        method: 'DELETE',
-                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-                    });
+                Swal.fire({
+                    title: 'Hapus File?',
+                    html: `Yakin ingin menghapus <strong>${this.selected.length}</strong> file yang dipilih?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc2626',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const promises = this.selected.map(id =>
+                            fetch(`/admin/media/${id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                        );
+                        Promise.all(promises).then(() => {
+                            Swal.fire({ icon: 'success', title: 'Berhasil', text: `${this.selected.length} file berhasil dihapus.`, timer: 1500, showConfirmButton: false });
+                            setTimeout(() => location.reload(), 1000);
+                        });
+                    }
                 });
-                setTimeout(() => location.reload(), 500);
             }
         }
     }

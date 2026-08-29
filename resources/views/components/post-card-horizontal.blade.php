@@ -1,16 +1,14 @@
 @props(['post'])
 
 <article class="flex gap-3 p-3 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.01] group">
-    @if($post->featured_image)
-        <div class="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden">
-            <img
-                src="{{ $post->featured_image_url }}"
-                alt="{{ $post->title }}"
-                loading="lazy"
-                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            >
-        </div>
-    @endif
+    <div class="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden">
+        <img
+            src="{{ $post->featured_image_url }}"
+            alt="{{ $post->title }}"
+            loading="lazy"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        >
+    </div>
 
     <div class="flex-1 min-w-0 flex flex-col justify-between">
         <div>

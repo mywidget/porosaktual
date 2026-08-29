@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Media;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MediaController extends Controller
 {
@@ -54,15 +55,35 @@ class MediaController extends Controller
         return back()->with('success', 'File uploaded successfully.');
     }
 
-    public function destroy(Media $media)
+    public function destroy(Request $request, $id)
     {
-        $path = public_path('storage/' . $media->file_path);
-        if (file_exists($path)) {
-            unlink($path);
+        $media = Media::find($id);
+
+        if (!$media) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Media tidak ditemukan.'], 404);
+            }
+            return back()->with('error', 'Media tidak ditemukan.');
         }
 
-        $media->delete();
+        $filePath = $media->file_path;
+        $deleted = $media->delete();
 
-        return back()->with('success', 'Media deleted successfully.');
+        if ($deleted && $filePath) {
+            $path = public_path('storage/' . $filePath);
+            if (file_exists($path) && is_file($path)) {
+                @unlink($path);
+            }
+        }
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => $deleted,
+                'message' => $deleted ? 'Media berhasil dihapus.' : 'Gagal menghapus media.',
+                'remaining' => Media::count(),
+            ]);
+        }
+
+        return back()->with('success', 'Media berhasil dihapus.');
     }
 }

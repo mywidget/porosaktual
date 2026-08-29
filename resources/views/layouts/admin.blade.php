@@ -7,6 +7,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- Quill Rich Text Editor -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <title>@yield('title', 'Admin') - {{ config('app.name', 'Poros Aktual') }} CMS</title>
     <style>[x-cloak] { display: none !important; }</style>
 </head>
@@ -121,6 +122,44 @@
 
     <!-- Quill Editor Script -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if(session('success'))
+    <script>
+        Swal.fire({ icon: 'success', title: 'Berhasil', text: '{{ session('success') }}', timer: 2000, showConfirmButton: false });
+    </script>
+    @endif
+    @if(session('error'))
+    <script>
+        Swal.fire({ icon: 'error', title: 'Gagal', text: '{{ session('error') }}' });
+    </script>
+    @endif
+    <script>
+        document.querySelectorAll('form[onsubmit]').forEach(form => {
+            const msg = form.getAttribute('onsubmit');
+            form.removeAttribute('onsubmit');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const text = msg.match(/return confirm\('(.+?)'\)/)?.[1] || 'Yakin ingin menghapus?';
+                Swal.fire({
+                    title: 'Konfirmasi',
+                    text: text,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc2626',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
     @stack('scripts')
 </body>
 </html>

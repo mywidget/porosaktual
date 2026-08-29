@@ -14,6 +14,7 @@ class SettingSeeder extends Seeder
             ['key' => 'site_description', 'value' => 'Portal Berita Online Terpercaya', 'group' => 'general'],
             ['key' => 'site_logo', 'value' => null, 'group' => 'general'],
             ['key' => 'site_favicon', 'value' => null, 'group' => 'general'],
+            ['key' => 'site_footer_logo', 'value' => null, 'group' => 'general'],
             ['key' => 'site_email', 'value' => 'info@porosaktual.com', 'group' => 'general'],
             ['key' => 'site_phone', 'value' => '+62 21 1234 5678', 'group' => 'general'],
             ['key' => 'site_address', 'value' => 'Jakarta, Indonesia', 'group' => 'general'],
@@ -30,10 +31,17 @@ class SettingSeeder extends Seeder
             ['key' => 'google_news_verification', 'value' => null, 'group' => 'seo'],
             ['key' => 'google_search_console', 'value' => null, 'group' => 'seo'],
             ['key' => 'sitemap_index', 'value' => null, 'group' => 'seo'],
+            ['key' => 'seo_meta_title', 'value' => 'Poros Aktual - Portal Berita Terpercaya', 'group' => 'seo'],
+            ['key' => 'seo_meta_description', 'value' => 'Portal berita terkini Indonesia. Temukan berita politik, nasional, ekonomi, teknologi, olahraga, dan lifestyle terbaru.', 'group' => 'seo'],
+            ['key' => 'seo_meta_keywords', 'value' => 'berita, news, Indonesia, terkini, politik, nasional, ekonomi, teknologi, olahraga, lifestyle', 'group' => 'seo'],
+            ['key' => 'seo_og_image', 'value' => null, 'group' => 'seo'],
         ];
 
         foreach ($settings as $setting) {
-            Setting::create($setting);
+            Setting::updateOrCreate(
+                ['key' => $setting['key']],
+                ['value' => $setting['value'], 'group' => $setting['group']]
+            );
         }
     }
 }

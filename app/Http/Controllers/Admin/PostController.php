@@ -9,6 +9,7 @@ use App\Models\Tag;
 use App\Services\CategoryService;
 use App\Services\PostService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class PostController extends Controller
@@ -108,6 +109,8 @@ class PostController extends Controller
         $post = Post::create($validated);
         $post->tags()->sync($tags);
 
+        $this->clearPostCache();
+
         return redirect()->route('admin.posts.index')->with('success', 'Post created successfully.');
     }
 
@@ -165,12 +168,16 @@ class PostController extends Controller
         $post->update($validated);
         $post->tags()->sync($tags);
 
+        $this->clearPostCache();
+
         return redirect()->route('admin.posts.index')->with('success', 'Post updated successfully.');
     }
 
     public function destroy(Post $post)
     {
         $post->delete();
+
+        $this->clearPostCache();
 
         return redirect()->route('admin.posts.index')->with('success', 'Post deleted successfully.');
     }
@@ -181,6 +188,8 @@ class PostController extends Controller
             'status' => 'published',
             'published_at' => $post->published_at ?? now(),
         ]);
+
+        $this->clearPostCache();
 
         return back()->with('success', 'Post published successfully.');
     }
@@ -241,6 +250,18 @@ class PostController extends Controller
                 break;
         }
 
+        $this->clearPostCache();
+
         return back()->with('success', 'Bulk action completed.');
+    }
+
+    private function clearPostCache(): void
+    {
+        Cache::forget('latest_posts');
+        Cache::forget('trending_posts');
+        Cache::forget('breaking_news');
+        Cache::forget('highlight_posts');
+        Cache::forget('sponsored_posts');
+        Cache::forget('popular_posts_week');
     }
 }

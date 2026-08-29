@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @if(!empty($settings['site_favicon']))
+        <link rel="icon" type="image/png" href="{{ asset('storage/' . $settings['site_favicon']) }}">
+        <link rel="apple-touch-icon" href="{{ asset('storage/' . $settings['site_favicon']) }}">
+    @else
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/apple-touch-icon.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon-16x16.png') }}">
+    @endif
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#013F99">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Poros Aktual">
+    <link rel="apple-touch-icon" href="{{ asset('images/apple-touch-icon.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('meta')
     <title>@yield('title', config('app.name', 'Poros Aktual'))</title>
@@ -19,15 +33,18 @@
             <div class="flex items-center justify-between h-16">
                 {{-- Logo --}}
                 <a href="{{ route('home') }}" class="flex-shrink-0">
-                    <span class="text-2xl font-extrabold tracking-tight">
-                        <span class="text-blue-700">Poros</span>
-                        <span class="text-red-600">Aktual</span>
-                    </span>
+                    @if(!empty($settings['site_logo']))
+                        <img src="{{ asset('storage/' . $settings['site_logo']) }}" alt="{{ $settings['site_name'] ?? 'Poros Aktual' }}" class="h-10">
+                    @else
+                        <span class="text-2xl font-extrabold tracking-tight">
+                            <span class="text-blue-700">Poros</span>
+                            <span class="text-red-600">Aktual</span>
+                        </span>
+                    @endif
                 </a>
 
                 {{-- Desktop Nav --}}
                 <nav class="hidden md:flex items-center space-x-1">
-                    <a href="{{ route('home') }}" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-50 dark:hover:bg-gray-700 transition">Home</a>
                     @foreach($headerMenus as $menu)
                         @if($menu->children->count())
                             <div x-data="{ open: false }" class="relative">
@@ -55,7 +72,6 @@
                             </a>
                         @endif
                     @endforeach
-                    <a href="{{ route('category.show', 'video') }}" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-50 dark:hover:bg-gray-700 transition">Video</a>
                 </nav>
 
                 {{-- Right Actions --}}
@@ -109,7 +125,6 @@
         {{-- Mobile Nav --}}
         <div x-show="mobileMenu" x-cloak x-transition class="md:hidden border-t dark:border-gray-700 bg-white dark:bg-gray-800 max-h-[70vh] overflow-y-auto">
             <div class="px-4 py-3 space-y-1">
-                <a href="{{ route('home') }}" class="block px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700">Home</a>
                 @foreach($headerMenus as $menu)
                     @if($menu->children->count())
                         <div x-data="{ open: false }">
@@ -134,7 +149,6 @@
                         </a>
                     @endif
                 @endforeach
-                <a href="{{ route('category.show', 'video') }}" class="block px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700">Video</a>
             </div>
         </div>
     </header>
@@ -187,15 +201,19 @@
     </div>
 
     {{-- Footer --}}
-    <footer class="bg-gray-800 text-gray-300 mt-12">
+    <footer style="background-color: #013F99" class="text-gray-300 mt-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
                 {{-- Brand --}}
                 <div>
-                    <span class="text-2xl font-extrabold">
-                        <span class="text-blue-400">Poros</span>
-                        <span class="text-red-400">Aktual</span>
-                    </span>
+                    @if(!empty($settings['site_footer_logo']))
+                        <img src="{{ asset('storage/' . $settings['site_footer_logo']) }}" alt="{{ $settings['site_name'] ?? 'Poros Aktual' }}" class="h-10 mb-3">
+                    @else
+                        <span class="text-2xl font-extrabold">
+                            <span class="text-white">Poros</span>
+                            <span class="text-red-400">Aktual</span>
+                        </span>
+                    @endif
                     <p class="mt-3 text-sm text-gray-400 leading-relaxed">
                         Portal berita terpercaya dengan informasi terkini dari Indonesia dan dunia.
                     </p>
@@ -245,8 +263,8 @@
             </div>
 
             {{-- Copyright --}}
-            <div class="mt-10 pt-8 border-t border-gray-700 text-center text-sm text-gray-400">
-                &copy; {{ date('Y') }} {{ config('app.name', 'Poros Aktual') }}. All rights reserved.
+            <div class="mt-10 pt-8 border-t border-blue-800 text-center text-sm text-gray-300">
+                {!! $settings['site_footer'] ?? '&copy; ' . date('Y') . ' ' . config('app.name', 'Poros Aktual') . '. All rights reserved.' !!}
             </div>
         </div>
     </footer>
@@ -264,6 +282,70 @@
             }));
         });
     </script>
+
+    {{-- PWA Service Worker + Install Banner --}}
+    <div x-data="pwaInstall()" x-show="showInstall" x-cloak
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="translate-y-full opacity-0"
+         x-transition:enter-end="translate-y-0 opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="translate-y-0 opacity-100"
+         x-transition:leave-end="translate-y-full opacity-0"
+         class="fixed bottom-0 left-0 right-0 z-50 p-4">
+        <div class="max-w-lg mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-4 flex items-center space-x-4">
+            <img src="{{ asset('images/android-chrome-192x192.png') }}" alt="Poros Aktual" class="w-12 h-12 rounded-lg flex-shrink-0">
+            <div class="flex-1 min-w-0">
+                <p class="font-semibold text-gray-900 dark:text-white text-sm">Pasang Poros Aktual</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Akses berita lebih cepat & membaca offline</p>
+            </div>
+            <button @click="install()" class="px-4 py-2 bg-[#013F99] text-white text-sm font-medium rounded-lg hover:bg-[#012d73] transition flex-shrink-0">Pasang</button>
+            <button @click="dismiss()" class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition flex-shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(() => {});
+            });
+        }
+
+        function pwaInstall() {
+            return {
+                showInstall: false,
+                deferredPrompt: null,
+                init() {
+                    window.addEventListener('beforeinstallprompt', (e) => {
+                        e.preventDefault();
+                        this.deferredPrompt = e;
+                        if (!localStorage.getItem('pwa_dismissed')) {
+                            this.showInstall = true;
+                        }
+                    });
+                    window.addEventListener('appinstalled', () => {
+                        this.showInstall = false;
+                        this.deferredPrompt = null;
+                    });
+                },
+                async install() {
+                    if (!this.deferredPrompt) return;
+                    this.deferredPrompt.prompt();
+                    const { outcome } = await this.deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        this.showInstall = false;
+                    }
+                    this.deferredPrompt = null;
+                },
+                dismiss() {
+                    this.showInstall = false;
+                    localStorage.setItem('pwa_dismissed', 'true');
+                }
+            };
+        }
+    </script>
+
     @stack('scripts')
 </body>
 </html>

@@ -1,6 +1,20 @@
 @extends('layouts.frontend')
 
-@section('title', config('app.name', 'Poros Aktual') . ' - Portal Berita Terpercaya')
+@section('title', $settings['seo_meta_title'] ?? config('app.name', 'Poros Aktual') . ' - Portal Berita Terpercaya')
+
+@push('meta')
+    <meta name="description" content="{{ $settings['seo_meta_description'] ?? 'Portal berita terkini Indonesia. Temukan berita politik, nasional, ekonomi, teknologi, olahraga, dan lifestyle terbaru.' }}">
+    <meta name="keywords" content="{{ $settings['seo_meta_keywords'] ?? 'berita, news, Indonesia, terkini, politik, nasional, ekonomi, teknologi, olahraga, lifestyle' }}">
+    <meta property="og:title" content="{{ $settings['seo_meta_title'] ?? config('app.name', 'Poros Aktual') . ' - Portal Berita Terpercaya' }}">
+    <meta property="og:description" content="{{ $settings['seo_meta_description'] ?? 'Portal berita terkini Indonesia. Temukan berita politik, nasional, ekonomi, teknologi, olahraga, dan lifestyle terbaru.' }}">
+    <meta property="og:image" content="{{ ($settings['seo_og_image'] ?? null) ? asset('storage/' . $settings['seo_og_image']) : asset('images/no-image.svg') }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $settings['seo_meta_title'] ?? config('app.name', 'Poros Aktual') . ' - Portal Berita Terpercaya' }}">
+    <meta name="twitter:description" content="{{ $settings['seo_meta_description'] ?? 'Portal berita terkini Indonesia.' }}">
+    <meta name="twitter:image" content="{{ ($settings['seo_og_image'] ?? null) ? asset('storage/' . $settings['seo_og_image']) : asset('images/no-image.svg') }}">
+@endpush
 
 @section('content')
 

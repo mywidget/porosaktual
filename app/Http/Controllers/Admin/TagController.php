@@ -67,4 +67,29 @@ class TagController extends Controller
 
         return redirect()->route('admin.tags.index')->with('success', 'Tag deleted successfully.');
     }
+
+    public function search(Request $request)
+    {
+        $search = $request->input('q', '');
+        $tags = Tag::where('name', 'like', "%{$search}%")
+            ->orderBy('name')
+            ->limit(20)
+            ->get(['id', 'name']);
+
+        return response()->json($tags);
+    }
+
+    public function storeAjax(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $tag = Tag::firstOrCreate(
+            ['name' => $request->name],
+            ['slug' => Str::slug($request->name)]
+        );
+
+        return response()->json(['id' => $tag->id, 'name' => $tag->name]);
+    }
 }

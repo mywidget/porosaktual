@@ -120,12 +120,8 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tags</label>
-                        <select name="tags[]" multiple class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" size="4">
-                            @foreach($tags ?? [] as $tag)
-                                <option value="{{ $tag->id }}" {{ in_array($tag->id, old('tags', [])) ? 'selected' : '' }}>{{ $tag->name }}</option>
-                            @endforeach
+                        <select id="tags-select" name="tags[]" multiple class="w-full">
                         </select>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Tekan Ctrl/Cmd untuk multi select</p>
                     </div>
                 </div>
             </div>
@@ -247,9 +243,16 @@
                         }
                     });
 
-                    if ('{{ old("content") }}') {
-                        this.quill.root.innerHTML = '{{ old("content") }}';
+                    const content = @json(old('content'));
+                    if (content) {
+                        this.quill.root.innerHTML = content;
                     }
+
+                    this.quill.on('text-change', () => {
+                        document.getElementById('contentInput').value = this.quill.root.innerHTML;
+                    });
+
+                    document.getElementById('contentInput').value = this.quill.root.innerHTML;
                 });
             },
 
@@ -286,12 +289,50 @@
         }
     }
 
-    // Update hidden input on form submit
-    document.querySelector('form').addEventListener('submit', function() {
-        const quillInstance = Quill.find(document.querySelector('#editor'));
-        if (quillInstance) {
-            document.getElementById('contentInput').value = quillInstance.root.innerHTML;
-        }
+    document.addEventListener('DOMContentLoaded', function() {
+        $('#tags-select').select2({
+            tags: true,
+            tokenSeparators: [','],
+            placeholder: 'Ketik nama tag, pisahkan dengan koma',
+            ajax: {
+                url: '{{ route("admin.tags.search") }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return { q: params.term };
+                },
+                processResults: function(data) {
+                    return { results: data };
+                }
+            },
+            createTag: function(params) {
+                var term = $.trim(params.term);
+                if (term === '') return null;
+                return {
+                    id: term,
+                    text: term,
+                    newTag: true
+                };
+            }
+        });
+
+        $('#tags-select').on('select2:selecting', function(e) {
+            if (e.params.args.data.newTag) {
+                e.preventDefault();
+                $.ajax({
+                    url: '{{ route("admin.tags.storeAjax") }}',
+                    type: 'POST',
+                    data: {
+                        name: e.params.args.data.text,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        var option = new Option(response.name, response.id, true, true);
+                        $('#tags-select').append(option).trigger('change');
+                    }
+                });
+            }
+        });
     });
 </script>
 @endpush
