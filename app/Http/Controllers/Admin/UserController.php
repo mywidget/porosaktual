@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -40,8 +41,8 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:admin,editor,author,user',
+            'password' => 'required|string|min:8',
+            'role' => 'required|in:admin,editor,wartawan,user',
             'avatar' => 'nullable|image|max:2048',
             'bio' => 'nullable|string|max:1000',
             'phone' => 'nullable|string|max:20',
@@ -49,6 +50,7 @@ class UserController extends Controller
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
+        $validated['slug'] = Str::slug($validated['name']) . '-' . Str::random(5);
         $validated['is_active'] = $validated['is_active'] ?? true;
 
         if ($request->hasFile('avatar')) {
@@ -70,8 +72,8 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8|confirmed',
-            'role' => 'required|in:admin,editor,author,user',
+            'password' => 'nullable|string|min:8',
+            'role' => 'required|in:admin,editor,wartawan,user',
             'avatar' => 'nullable|image|max:2048',
             'bio' => 'nullable|string|max:1000',
             'phone' => 'nullable|string|max:20',
@@ -82,6 +84,10 @@ class UserController extends Controller
             $validated['password'] = Hash::make($validated['password']);
         } else {
             unset($validated['password']);
+        }
+
+        if ($validated['name'] !== $user->name) {
+            $validated['slug'] = Str::slug($validated['name']) . '-' . Str::random(5);
         }
 
         if ($request->hasFile('avatar')) {

@@ -94,6 +94,7 @@
                 <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Penerbitan</h2>
 
                 <div class="space-y-4">
+                    @if(!auth()->user()->hasRole('wartawan'))
                     <div>
                         <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
                         <select name="status" id="status" x-model="status" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
@@ -107,6 +108,10 @@
                         <label for="scheduled_at" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Jadwalkan Pada</label>
                         <input type="datetime-local" name="scheduled_at" id="scheduled_at" value="{{ old('scheduled_at') }}" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     </div>
+                    @else
+                    <input type="hidden" name="status" value="draft">
+                    <p class="text-sm text-gray-500 dark:text-gray-400 italic">Berita akan disimpan sebagai <strong>Draft</strong> dan menunggu review dari Editor/Admin.</p>
+                    @endif
 
                     <div>
                         <label for="category_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kategori <span class="text-red-500">*</span></label>
@@ -157,6 +162,7 @@
                 </div>
             </div>
 
+            @if(!auth()->user()->hasRole('wartawan'))
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
                 <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Opsi Tambahan</h2>
 
@@ -179,6 +185,7 @@
                     </label>
                 </div>
             </div>
+            @endif
 
             <button type="submit" class="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition">Simpan Berita</button>
         </div>

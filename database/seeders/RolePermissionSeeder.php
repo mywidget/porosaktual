@@ -60,6 +60,7 @@ class RolePermissionSeeder extends Seeder
         $wartawan = Role::firstOrCreate(['name' => 'wartawan']);
         $wartawan->syncPermissions([
             'manage-dashboard',
+            'manage-posts',
             'edit-own-posts',
             'manage-media',
         ]);

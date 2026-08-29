@@ -92,7 +92,7 @@
                             <option value="">-- Pilih Role --</option>
                             <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
                             <option value="editor" {{ old('role') === 'editor' ? 'selected' : '' }}>Editor</option>
-                            <option value="author" {{ old('role') === 'author' ? 'selected' : '' }}>Penulis</option>
+                            <option value="wartawan" {{ old('role') === 'wartawan' ? 'selected' : '' }}>Wartawan</option>
                             <option value="user" {{ old('role') === 'user' ? 'selected' : '' }}>User</option>
                         </select>
                     </div>

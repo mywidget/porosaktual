@@ -27,13 +27,18 @@ class PostController extends Controller
     {
         $query = Post::with(['author', 'category', 'tags']);
 
+        // Wartawan hanya bisa lihat post sendiri
+        if (auth()->user()->hasRole('wartawan')) {
+            $query->where('author_id', auth()->id());
+        }
+
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
         }
-        if ($request->filled('author_id')) {
+        if ($request->filled('author_id') && !auth()->user()->hasRole('wartawan')) {
             $query->where('author_id', $request->author_id);
         }
         if ($request->filled('search')) {
@@ -90,6 +95,12 @@ class PostController extends Controller
         $validated['slug'] = Str::slug($validated['title']);
         $validated['author_id'] = auth()->id();
 
+        // Wartawan selalu simpan sebagai draft
+        if (auth()->user()->hasRole('wartawan')) {
+            $validated['status'] = 'draft';
+            unset($validated['scheduled_at']);
+        }
+
         if ($validated['status'] === 'published') {
             $validated['published_at'] = now();
         }
@@ -116,6 +127,11 @@ class PostController extends Controller
 
     public function edit(Post $post)
     {
+        // Wartawan hanya bisa edit post sendiri
+        if (auth()->user()->hasRole('wartawan') && $post->author_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses untuk mengubah berita ini.');
+        }
+
         $post->load('tags');
         $categories = $this->categoryService->getActiveCategories();
         $tags = Tag::orderBy('name')->get();
@@ -125,6 +141,11 @@ class PostController extends Controller
 
     public function update(Request $request, Post $post)
     {
+        // Wartawan hanya bisa edit post sendiri
+        if (auth()->user()->hasRole('wartawan') && $post->author_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses untuk mengubah berita ini.');
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'excerpt' => 'nullable|string|max:500',
@@ -147,6 +168,16 @@ class PostController extends Controller
 
         if ($validated['title'] !== $post->title) {
             $validated['slug'] = Str::slug($validated['title']);
+        }
+
+        // Wartawan tidak bisa ubah status — selalu draft
+        if (auth()->user()->hasRole('wartawan')) {
+            $validated['status'] = 'draft';
+            unset($validated['scheduled_at']);
+            unset($validated['is_trending']);
+            unset($validated['is_breaking']);
+            unset($validated['is_highlight']);
+            unset($validated['is_sponsored']);
         }
 
         if ($validated['status'] === 'published' && !$post->published_at) {
@@ -175,6 +206,11 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
+        // Wartawan hanya bisa hapus post sendiri
+        if (auth()->user()->hasRole('wartawan') && $post->author_id !== auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses untuk menghapus berita ini.');
+        }
+
         $post->delete();
 
         $this->clearPostCache();
@@ -184,6 +220,11 @@ class PostController extends Controller
 
     public function publish(Post $post)
     {
+        // Wartawan tidak bisa publish
+        if (auth()->user()->hasRole('wartawan')) {
+            abort(403, 'Wartawan tidak dapat mempublikasikan berita.');
+        }
+
         $post->update([
             'status' => 'published',
             'published_at' => $post->published_at ?? now(),
@@ -196,6 +237,10 @@ class PostController extends Controller
 
     public function schedule(Request $request, Post $post)
     {
+        if (auth()->user()->hasRole('wartawan')) {
+            abort(403, 'Wartawan tidak dapat menjadwalkan berita.');
+        }
+
         $request->validate([
             'scheduled_at' => 'required|date|after:now',
         ]);
@@ -210,6 +255,9 @@ class PostController extends Controller
 
     public function toggleTrending(Post $post)
     {
+        if (auth()->user()->hasRole('wartawan')) {
+            abort(403, 'Anda tidak memiliki akses.');
+        }
         $post->update(['is_trending' => !$post->is_trending]);
 
         return back()->with('success', 'Trending status updated.');
@@ -217,6 +265,9 @@ class PostController extends Controller
 
     public function toggleBreaking(Post $post)
     {
+        if (auth()->user()->hasRole('wartawan')) {
+            abort(403, 'Anda tidak memiliki akses.');
+        }
         $post->update(['is_breaking' => !$post->is_breaking]);
 
         return back()->with('success', 'Breaking status updated.');
@@ -224,6 +275,9 @@ class PostController extends Controller
 
     public function toggleHighlight(Post $post)
     {
+        if (auth()->user()->hasRole('wartawan')) {
+            abort(403, 'Anda tidak memiliki akses.');
+        }
         $post->update(['is_highlight' => !$post->is_highlight]);
 
         return back()->with('success', 'Highlight status updated.');
@@ -231,6 +285,10 @@ class PostController extends Controller
 
     public function bulkAction(Request $request)
     {
+        if (auth()->user()->hasRole('wartawan')) {
+            abort(403, 'Anda tidak memiliki akses untuk bulk action.');
+        }
+
         $request->validate([
             'action' => 'required|in:publish,draft,delete',
             'ids' => 'required|array',
