@@ -30,7 +30,7 @@
     {{-- Header --}}
     <header class="sticky top-0 z-50 bg-white dark:bg-gray-800 shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
+            <div class="flex items-center h-16">
                 {{-- Logo --}}
                 <a href="{{ route('home') }}" class="flex-shrink-0">
                     @if(!empty($settings['site_logo']))
@@ -44,7 +44,7 @@
                 </a>
 
                 {{-- Desktop Nav --}}
-                <nav class="hidden md:flex items-center space-x-1">
+                <nav class="hidden md:flex items-center space-x-1 flex-1 justify-center">
                     @foreach($headerMenus as $menu)
                         @if($menu->children->count())
                             <div x-data="{ open: false }" class="relative">
@@ -75,7 +75,7 @@
                 </nav>
 
                 {{-- Right Actions --}}
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-2 ml-auto">
                     {{-- Search --}}
                     <button @click="searchOpen = !searchOpen" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition" aria-label="Cari">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -110,8 +110,6 @@
                                 </form>
                             </div>
                         </div>
-                    @else
-                        <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-medium bg-blue-700 text-white rounded-md hover:bg-blue-800 transition">Login</a>
                     @endauth
 
                     {{-- Mobile Menu Toggle --}}
@@ -173,7 +171,7 @@
                 <span>Breaking News</span>
             </div>
             <div class="overflow-hidden flex-1 relative h-10 flex items-center"
-                 x-data="{ items: @js($breakingNews ?? ['Selamat datang di Poros Aktual - Portal Berita Terpercaya']), offset: 0 }"
+                 x-data="{ items: @js($breakingNewsItems ?? ['Selamat datang di Poros Aktual - Portal Berita Terpercaya']), offset: 0 }"
                  x-init="setInterval(() => { if (!paused) { offset = (offset + 1) % items.length; } }, 4000)"
                  @mouseenter="paused = true" @mouseleave="paused = false">
                 <template x-for="(item, index) in items" :key="index">

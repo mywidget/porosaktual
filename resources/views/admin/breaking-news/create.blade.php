@@ -30,8 +30,8 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL <span class="text-red-500">*</span></label>
-                <input type="url" name="url" value="{{ old('url') }}" required
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL</label>
+                <input type="url" name="url" value="{{ old('url') }}"
                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
                        placeholder="https://...">
             </div>

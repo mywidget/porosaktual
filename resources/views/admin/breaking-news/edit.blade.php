@@ -19,7 +19,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('admin.breaking-news.update', $breakingNews) }}">
+    <form method="POST" action="{{ route('admin.breaking-news.update', $breakingNews->id) }}">
         @csrf
         @method('PUT')
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700 space-y-4">
@@ -30,8 +30,8 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL <span class="text-red-500">*</span></label>
-                <input type="url" name="url" value="{{ old('url', $breakingNews->url) }}" required
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL</label>
+                <input type="url" name="url" value="{{ old('url', $breakingNews->url) }}"
                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
             </div>
 

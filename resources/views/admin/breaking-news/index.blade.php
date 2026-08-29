@@ -90,8 +90,8 @@
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-xs truncate">{{ $item->post->title ?? '-' }}</td>
                             <td class="px-6 py-4">
-                                <form method="POST" action="{{ route('admin.breaking-news.toggle', $item) }}">
-                                    @csrf @method('PATCH')
+                                <form method="POST" action="{{ route('admin.breaking-news.toggle', $item->id) }}">
+                                    @csrf
                                     <button type="submit" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 {{ $item->is_active ? 'bg-red-600' : 'bg-gray-200 dark:bg-gray-600' }}">
                                         <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {{ $item->is_active ? 'translate-x-5' : 'translate-x-0' }}"></span>
                                     </button>
@@ -100,10 +100,10 @@
                             <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ $item->created_at->format('d M Y H:i') }}</td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end space-x-2">
-                                    <a href="{{ route('admin.breaking-news.edit', $item) }}" class="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition" title="Edit">
+                                    <a href="{{ route('admin.breaking-news.edit', $item->id) }}" class="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition" title="Edit">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                     </a>
-                                    <form method="POST" action="{{ route('admin.breaking-news.destroy', $item) }}" onsubmit="return confirm('Yakin ingin menghapus breaking news ini?')">
+                                    <form method="POST" action="{{ route('admin.breaking-news.destroy', $item->id) }}" onsubmit="return confirm('Yakin ingin menghapus breaking news ini?')">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition" title="Hapus">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>

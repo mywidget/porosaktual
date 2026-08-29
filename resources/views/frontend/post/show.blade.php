@@ -189,57 +189,40 @@
             @endif
 
             {{-- Comments --}}
-            @php $commentEnabled = ($settings['comment_enabled'] ?? '1') === '1'; @endphp
+            @if(($settings['comment_enabled'] ?? '0') === '1')
             <div class="mt-12 pt-8 border-t">
                 <h2 class="text-xl font-bold mb-6 flex items-center space-x-2">
                     <svg class="w-6 h-6 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                     <span>Komentar ({{ $post->comments->where('status', 'approved')->count() }})</span>
                 </h2>
 
-                @if($commentEnabled)
-                    {{-- Comment Form --}}
-                    <form id="commentForm" class="mb-8" x-data="{ submitting: false, message: '' }" @submit.prevent="submitComment">
-                        <input type="hidden" name="post_id" value="{{ $post->id }}">
-                        <div class="space-y-3">
-                            @auth
-                                <input type="text" name="name" value="{{ auth()->user()->name }}" readonly
-                                       class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg text-sm bg-gray-50 dark:bg-gray-900">
-                                <input type="email" name="email" value="{{ auth()->user()->email }}" readonly
-                                       class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg text-sm bg-gray-50 dark:bg-gray-900">
-                            @else
-                                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-3">
-                                    <p class="text-sm text-blue-800 dark:text-blue-300 mb-3">Silakan login atau daftar untuk mengirim komentar</p>
-                                    <div class="flex gap-2">
-                                        <a href="{{ route('login') }}" class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition text-center">
-                                            Login
-                                        </a>
-                                        <a href="{{ route('register') }}" class="flex-1 px-4 py-2 bg-blue-100 dark:bg-blue-800 hover:bg-blue-200 dark:hover:bg-blue-700 text-blue-800 dark:text-blue-200 text-sm font-medium rounded-lg transition text-center">
-                                            Daftar
-                                        </a>
-                                    </div>
-                                </div>
-                                <input type="text" name="name" required placeholder="Nama Anda"
-                                       class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                <input type="email" name="email" required placeholder="Email Anda"
-                                       class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                            @endauth
-                            <textarea name="content" rows="4" required
-                                      class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none"
-                                      placeholder="Tulis komentar Anda..."></textarea>
-                            <div class="flex items-center justify-between">
-                                <p x-show="message" :class="message.includes('berhasil') ? 'text-green-600' : 'text-red-600'" x-text="message" class="text-sm"></p>
-                                <button type="submit" :disabled="submitting" class="px-6 py-2 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-800 transition disabled:opacity-50">
-                                    <span x-show="!submitting">Kirim Komentar</span>
-                                    <span x-show="submitting">Mengirim...</span>
-                                </button>
-                            </div>
+                {{-- Comment Form --}}
+                <form id="commentForm" class="mb-8" x-data="{ submitting: false, message: '' }" @submit.prevent="submitComment">
+                    <input type="hidden" name="post_id" value="{{ $post->id }}">
+                    <div class="space-y-3">
+                        @auth
+                            <input type="text" name="name" value="{{ auth()->user()->name }}" readonly
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg text-sm bg-gray-50 dark:bg-gray-900">
+                            <input type="email" name="email" value="{{ auth()->user()->email }}" readonly
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg text-sm bg-gray-50 dark:bg-gray-900">
+                        @else
+                            <input type="text" name="name" required placeholder="Nama Anda"
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            <input type="email" name="email" required placeholder="Email Anda"
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        @endauth
+                        <textarea name="content" rows="4" required
+                                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                                  placeholder="Tulis komentar Anda..."></textarea>
+                        <div class="flex items-center justify-between">
+                            <p x-show="message" :class="message.includes('berhasil') ? 'text-green-600' : 'text-red-600'" x-text="message" class="text-sm"></p>
+                            <button type="submit" :disabled="submitting" class="px-6 py-2 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-800 transition disabled:opacity-50">
+                                <span x-show="!submitting">Kirim Komentar</span>
+                                <span x-show="submitting">Mengirim...</span>
+                            </button>
                         </div>
-                    </form>
-                @else
-                    <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-8 text-center">
-                        <p class="text-sm text-gray-500">Komentar saat ini tidak aktif.</p>
                     </div>
-                @endif
+                </form>
 
                 {{-- Comments List --}}
                 <div class="space-y-6">
@@ -262,6 +245,7 @@
                     @endif
                 </div>
             </div>
+            @endif
         </div>
 
         {{-- Sidebar --}}

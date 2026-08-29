@@ -39,12 +39,18 @@
                 <div class="space-y-4">
                     <div>
                         <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama <span class="text-red-500">*</span></label>
-                        <input type="text" name="name" id="name" value="{{ old('name', $category->name) }}" required class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Nama kategori" x-data="{ name: '{{ old("name", $category->name) }}' }" x-init="$watch('name', val => $refs.slugInput.value = val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''))">
+                        <input type="text" name="name" id="name" value="{{ old('name', $category->name) }}" required class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('name') border-red-500 @enderror" placeholder="Nama kategori" x-data="{ name: '{{ old("name", $category->name) }}' }" x-init="$watch('name', val => $refs.slugInput.value = val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''))">
+                        @error('name')
+                            <p class="text-xs text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
                         <label for="slug" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Slug <span class="text-red-500">*</span></label>
-                        <input type="text" name="slug" id="slug" x-ref="slugInput" value="{{ old('slug', $category->slug) }}" required class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="slug-kategori">
+                        <input type="text" name="slug" id="slug" x-ref="slugInput" value="{{ old('slug', $category->slug) }}" required class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('slug') border-red-500 @enderror" placeholder="slug-kategori">
+                        @error('slug')
+                            <p class="text-xs text-red-600 dark:text-red-400 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>

@@ -4,6 +4,11 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        @if(!empty($settings['site_favicon']))
+            <link rel="icon" type="image/png" href="{{ asset('storage/' . $settings['site_favicon']) }}">
+        @else
+            <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32x32.png') }}">
+        @endif
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
@@ -18,7 +23,14 @@
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
             <div>
                 <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
+                    @if(!empty($settings['site_logo']))
+                        <img src="{{ asset('storage/' . $settings['site_logo']) }}" alt="{{ $settings['site_name'] ?? 'Poros Aktual' }}" class="h-16">
+                    @else
+                        <span class="text-3xl font-extrabold tracking-tight">
+                            <span class="text-blue-700">Poros</span>
+                            <span class="text-red-600">Aktual</span>
+                        </span>
+                    @endif
                 </a>
             </div>
 

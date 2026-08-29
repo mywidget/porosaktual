@@ -9,13 +9,14 @@ use Illuminate\Support\Str;
 
 class TagController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $limit = (int) $request->input('limit', 20);
         $tags = Tag::withCount('posts')
             ->orderBy('name')
-            ->paginate(20);
+            ->paginate($limit);
 
-        return view('admin.tags.index', compact('tags'));
+        return view('admin.tags.index', compact('tags', 'limit'));
     }
 
     public function create()

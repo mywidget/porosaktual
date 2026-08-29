@@ -36,18 +36,21 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Logo</label>
                             <input type="file" name="site_logo" accept="image/*" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 dark:file:bg-blue-900/30 dark:file:text-blue-400">
-                            @if(!empty($settings['site_logo']))
+                            @if(isset($settings['site_logo']) && $settings['site_logo'])
                                 <img src="{{ asset('storage/' . $settings['site_logo']) }}" class="mt-2 h-10" alt="Logo">
                             @endif
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Favicon</label>
                             <input type="file" name="site_favicon" accept="image/*" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 dark:file:bg-blue-900/30 dark:file:text-blue-400">
+                            @if(isset($settings['site_favicon']) && $settings['site_favicon'])
+                                <img src="{{ asset('storage/' . $settings['site_favicon']) }}" class="mt-2 h-10" alt="Favicon">
+                            @endif
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Logo Footer (Warna Satu / Monokrom)</label>
                             <input type="file" name="site_footer_logo" accept="image/*" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 dark:file:bg-blue-900/30 dark:file:text-blue-400">
-                            @if(!empty($settings['site_footer_logo']))
+                            @if(isset($settings['site_footer_logo']) && $settings['site_footer_logo'])
                                 <img src="{{ asset('storage/' . $settings['site_footer_logo']) }}" class="mt-2 h-10" alt="Footer Logo">
                             @endif
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Logo untuk footer dengan background gelap (disarankan warna putih/monokrom)</p>

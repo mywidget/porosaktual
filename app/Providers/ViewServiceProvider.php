@@ -17,12 +17,9 @@ class ViewServiceProvider extends ServiceProvider
         View::composer('*', function ($view) {
             $view->with('categories', \App\Models\Category::where('is_active', true)->whereNull('parent_id')->with('children')->orderBy('sort_order')->get());
             $view->with('settings', \App\Services\SettingService::getAllSettings());
-            // Only set breakingNews if it hasn't been set by the controller (for paginated views)
-            if (!$view->offsetExists('breakingNews') || !method_exists($view['breakingNews'], 'hasPages')) {
-                $view->with('breakingNews', \App\Models\BreakingNews::where('is_active', true)->where('start_date', '<=', now())->where(function ($q) {
-                    $q->whereNull('end_date')->orWhere('end_date', '>=', now());
-                })->orderBy('priority', 'desc')->limit(10)->get());
-            }
+            $view->with('breakingNewsItems', \App\Models\BreakingNews::where('is_active', true)->where('start_date', '<=', now())->where(function ($q) {
+                $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+            })->orderBy('priority', 'desc')->limit(10)->get());
             $view->with('headerMenus', \App\Models\Menu::where('location', 'header')->where('is_active', true)->whereNull('parent_id')->with('children')->orderBy('sort_order')->get());
             $view->with('footerMenus', \App\Models\Menu::where('location', 'footer')->where('is_active', true)->whereNull('parent_id')->with('children')->orderBy('sort_order')->get());
         });
