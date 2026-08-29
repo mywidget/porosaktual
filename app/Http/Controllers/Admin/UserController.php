@@ -59,6 +59,9 @@ class UserController extends Controller
 
         User::create($validated);
 
+        $user = User::where('email', $validated['email'])->first();
+        $user->assignRole($validated['role']);
+
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
 
@@ -95,6 +98,7 @@ class UserController extends Controller
         }
 
         $user->update($validated);
+        $user->syncRoles($validated['role']);
 
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
