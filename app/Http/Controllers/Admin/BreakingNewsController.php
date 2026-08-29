@@ -53,7 +53,7 @@ class BreakingNewsController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'url' => 'required|url|max:500',
+            'url' => 'nullable|string|max:500',
             'is_active' => 'nullable|boolean',
             'priority' => 'required|integer|min:0',
             'start_date' => 'required|date',
@@ -76,7 +76,7 @@ class BreakingNewsController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'url' => 'required|url|max:500',
+            'url' => 'nullable|string|max:500',
             'is_active' => 'nullable|boolean',
             'priority' => 'required|integer|min:0',
             'start_date' => 'required|date',

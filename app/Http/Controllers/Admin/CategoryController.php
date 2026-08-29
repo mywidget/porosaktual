@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
@@ -30,7 +31,7 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name',
+            'name' => ['required', 'string', 'max:255', Rule::unique('categories', 'name')->withoutTrashed()],
             'description' => 'nullable|string|max:1000',
             'image' => 'nullable|image|max:2048',
             'parent_id' => 'nullable|exists:categories,id',
@@ -67,7 +68,7 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+            'name' => ['required', 'string', 'max:255', Rule::unique('categories', 'name')->ignore($category->id)->withoutTrashed()],
             'description' => 'nullable|string|max:1000',
             'image' => 'nullable|image|max:2048',
             'parent_id' => 'nullable|exists:categories,id',

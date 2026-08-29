@@ -1,17 +1,16 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Halaman')
+@section('title', 'Tambah Halaman')
 
 @section('content')
-<form method="POST" action="{{ route('admin.pages.update', $page) }}" enctype="multipart/form-data">
+<form method="POST" action="{{ route('admin.pages.store') }}" enctype="multipart/form-data">
     @csrf
-    @method('PUT')
 
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Edit Halaman</h1>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Tambah Halaman</h1>
         <div class="flex items-center space-x-3">
             <a href="{{ route('admin.pages.index') }}" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg transition">Batal</a>
-            <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">Perbarui</button>
+            <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">Simpan</button>
         </div>
     </div>
 
@@ -39,23 +38,18 @@
                 <div class="space-y-4">
                     <div>
                         <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Judul <span class="text-red-500">*</span></label>
-                        <input type="text" name="title" id="title" value="{{ old('title', $page->title) }}" required class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Masukkan judul halaman">
-                    </div>
-
-                    <div>
-                        <label for="slug" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Slug <span class="text-red-500">*</span></label>
-                        <input type="text" name="slug" id="slug" value="{{ old('slug', $page->slug) }}" required class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="slug-halaman">
+                        <input type="text" name="title" id="title" value="{{ old('title') }}" required class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Masukkan judul halaman">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Konten <span class="text-red-500">*</span></label>
-                        <input type="hidden" name="content" id="content_hidden" value="{{ old('content', $page->content) }}">
+                        <input type="hidden" name="content" id="content_hidden" value="{{ old('content') }}">
                         <div id="quill-editor" style="min-height:300px;"></div>
                     </div>
 
                     <div>
                         <label for="excerpt" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Excerpt</label>
-                        <textarea name="excerpt" id="excerpt" rows="3" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Ringkasan singkat halaman">{{ old('excerpt', $page->excerpt) }}</textarea>
+                        <textarea name="excerpt" id="excerpt" rows="3" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Ringkasan singkat halaman">{{ old('excerpt') }}</textarea>
                     </div>
                 </div>
             </div>
@@ -66,18 +60,17 @@
                 <div class="space-y-4">
                     <div>
                         <label for="meta_title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Meta Title</label>
-                        <input type="text" name="meta_title" id="meta_title" value="{{ old('meta_title', $page->meta_title) }}" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Judul untuk SEO">
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Kosongkan untuk menggunakan judul default</p>
+                        <input type="text" name="meta_title" id="meta_title" value="{{ old('meta_title') }}" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Judul untuk SEO">
                     </div>
 
                     <div>
                         <label for="meta_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Meta Description</label>
-                        <textarea name="meta_description" id="meta_description" rows="3" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Deskripsi untuk SEO">{{ old('meta_description', $page->meta_description) }}</textarea>
+                        <textarea name="meta_description" id="meta_description" rows="3" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Deskripsi untuk SEO">{{ old('meta_description') }}</textarea>
                     </div>
 
                     <div>
                         <label for="meta_keywords" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Meta Keywords</label>
-                        <input type="text" name="meta_keywords" id="meta_keywords" value="{{ old('meta_keywords', $page->meta_keywords) }}" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="keyword1, keyword2, keyword3">
+                        <input type="text" name="meta_keywords" id="meta_keywords" value="{{ old('meta_keywords') }}" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="keyword1, keyword2, keyword3">
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Pisahkan dengan koma</p>
                     </div>
                 </div>
@@ -92,17 +85,17 @@
                     <div>
                         <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
                         <select name="status" id="status" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            <option value="draft" {{ old('status', $page->status) === 'draft' ? 'selected' : '' }}>Draft</option>
-                            <option value="published" {{ old('status', $page->status) === 'published' ? 'selected' : '' }}>Published</option>
+                            <option value="draft">Draft</option>
+                            <option value="published">Published</option>
                         </select>
                     </div>
 
                     <div>
                         <label for="template" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Template</label>
                         <select name="template" id="template" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            <option value="default" {{ old('template', $page->template) === 'default' ? 'selected' : '' }}>Default</option>
-                            <option value="full-width" {{ old('template', $page->template) === 'full-width' ? 'selected' : '' }}>Full Width</option>
-                            <option value="sidebar" {{ old('template', $page->template) === 'sidebar' ? 'selected' : '' }}>Sidebar</option>
+                            <option value="default">Default</option>
+                            <option value="full-width">Full Width</option>
+                            <option value="sidebar">Sidebar</option>
                         </select>
                     </div>
                 </div>
@@ -112,18 +105,12 @@
                 <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Gambar Utama</h2>
 
                 <div>
-                    @if($page->featured_image)
-                        <div class="mb-3">
-                            <img src="{{ asset('storage/' . $page->featured_image) }}" alt="Current image" class="w-full h-40 object-cover rounded-lg">
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Gambar saat ini</p>
-                        </div>
-                    @endif
-                    <label for="featured_image" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ganti Gambar</label>
+                    <label for="featured_image" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Pilih Gambar</label>
                     <input type="file" name="featured_image" id="featured_image" accept="image/*" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 dark:file:bg-blue-900/30 dark:file:text-blue-400 hover:file:bg-blue-100">
                 </div>
             </div>
 
-            <button type="submit" class="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition">Perbarui Halaman</button>
+            <button type="submit" class="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition">Simpan Halaman</button>
         </div>
     </div>
 </form>

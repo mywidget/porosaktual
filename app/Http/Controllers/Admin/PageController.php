@@ -25,7 +25,7 @@ class PageController extends Controller
             });
         }
 
-        $pages = $query->latest()->paginate(20);
+        $pages = $query->latest()->paginate($request->input('limit', 20));
 
         return view('admin.pages.index', compact('pages'));
     }
