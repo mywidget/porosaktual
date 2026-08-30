@@ -31,17 +31,29 @@
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL</label>
-                <input type="text" name="url" value="{{ old('url', $breakingNews->url) }}"
+                <input type="text" name="url" value="{{ old('url', $breakingNews->url) }}" id="urlField"
                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
             </div>
 
-            <div>
+            <div x-data="{
+                posts: @js(\App\Models\Post::latest()->limit(100)->get()->map(fn($p) => ['id' => $p->id, 'title' => $p->title, 'url' => route('post.show', $p->slug)])),
+                selectedPost: '{{ old('post_id', $breakingNews->post_id) }}',
+                selectPost(id) {
+                    this.selectedPost = id;
+                    if (id) {
+                        const post = this.posts.find(p => p.id == id);
+                        if (post) {
+                            document.getElementById('urlField').value = post.url;
+                        }
+                    }
+                }
+            }">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Berita Terkait</label>
-                <select name="post_id" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                <select name="post_id" @change="selectPost($event.target.value)" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     <option value="">Tidak ada</option>
-                    @foreach(\App\Models\Post::latest()->limit(100)->get() as $post)
-                        <option value="{{ $post->id }}" {{ old('post_id', $breakingNews->post_id) == $post->id ? 'selected' : '' }}>{{ $post->title }}</option>
-                    @endforeach
+                    <template x-for="post in posts" :key="post.id">
+                        <option :value="post.id" x-text="post.title" :selected="selectedPost == post.id"></option>
+                    </template>
                 </select>
             </div>
 

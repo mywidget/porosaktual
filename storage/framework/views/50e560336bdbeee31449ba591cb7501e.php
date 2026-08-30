@@ -3,28 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    @if(!empty($settings['site_favicon']))
-        <link rel="icon" type="image/png" href="{{ asset('storage/' . $settings['site_favicon']) }}">
-        <link rel="apple-touch-icon" href="{{ asset('storage/' . $settings['site_favicon']) }}">
-    @else
-        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/apple-touch-icon.png') }}">
-        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32x32.png') }}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon-16x16.png') }}">
-    @endif
-    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <?php if(!empty($settings['site_favicon'])): ?>
+        <link rel="icon" type="image/png" href="<?php echo e(asset('storage/' . $settings['site_favicon'])); ?>">
+        <link rel="apple-touch-icon" href="<?php echo e(asset('storage/' . $settings['site_favicon'])); ?>">
+    <?php else: ?>
+        <link rel="apple-touch-icon" sizes="180x180" href="<?php echo e(asset('images/apple-touch-icon.png')); ?>">
+        <link rel="icon" type="image/png" sizes="32x32" href="<?php echo e(asset('images/favicon-32x32.png')); ?>">
+        <link rel="icon" type="image/png" sizes="16x16" href="<?php echo e(asset('images/favicon-16x16.png')); ?>">
+    <?php endif; ?>
+    <link rel="manifest" href="<?php echo e(asset('manifest.json')); ?>">
     <meta name="theme-color" content="#013F99">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Poros Aktual">
-    <link rel="apple-touch-icon" href="{{ asset('images/apple-touch-icon.png') }}">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @if(app()->environment('production'))
+    <link rel="apple-touch-icon" href="<?php echo e(asset('images/apple-touch-icon.png')); ?>">
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
+    <?php if(app()->environment('production')): ?>
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.14.9/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
-    @endif
-    @stack('meta')
-    <title>@yield('title', config('app.name', 'Poros Aktual'))</title>
+    <?php endif; ?>
+    <?php echo $__env->yieldPushContent('meta'); ?>
+    <title><?php echo $__env->yieldContent('title', config('app.name', 'Poros Aktual')); ?></title>
     <style>
         [x-cloak] { display: none !important; }
         .ticker-wrap {
@@ -45,61 +45,63 @@
 </head>
 <body class="dark:bg-gray-900 dark:text-gray-100 bg-white text-gray-900 min-h-screen flex flex-col">
 
-    {{-- Header --}}
+    
     <header class="sticky top-0 z-50 bg-white dark:bg-gray-800 shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center h-16">
-                {{-- Logo --}}
-                <a href="{{ route('home') }}" class="flex-shrink-0">
-                    @if(!empty($settings['site_logo']))
-                        <img src="{{ asset('storage/' . $settings['site_logo']) }}" alt="{{ $settings['site_name'] ?? 'Poros Aktual' }}" class="h-10">
-                    @else
+                
+                <a href="<?php echo e(route('home')); ?>" class="flex-shrink-0">
+                    <?php if(!empty($settings['site_logo'])): ?>
+                        <img src="<?php echo e(asset('storage/' . $settings['site_logo'])); ?>" alt="<?php echo e($settings['site_name'] ?? 'Poros Aktual'); ?>" class="h-10">
+                    <?php else: ?>
                         <span class="text-2xl font-extrabold tracking-tight">
                             <span class="text-blue-700">Poros</span>
                             <span class="text-red-600">Aktual</span>
                         </span>
-                    @endif
+                    <?php endif; ?>
                 </a>
 
-                {{-- Desktop Nav --}}
+                
                 <nav class="hidden md:flex items-center space-x-1 flex-1 justify-center">
-                    @foreach($headerMenus as $menu)
-                        @if($menu->children->count())
+                    <?php $__currentLoopData = $headerMenus; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $menu): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php if($menu->children->count()): ?>
                             <div x-data="{ open: false }" class="relative">
                                 <button @click="open = !open" @click.away="open = false"
                                         class="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-50 dark:hover:bg-gray-700 transition">
-                                    <span>{{ $menu->name }}</span>
+                                    <span><?php echo e($menu->name); ?></span>
                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                                 </button>
                                 <div x-show="open" x-cloak x-transition
                                      class="absolute left-0 mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-1 z-50 border border-gray-100 dark:border-gray-700">
-                                    <a href="{{ $menu->url }}" class="block px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition">{{ $menu->name }}</a>
-                                    @foreach($menu->children->where('is_active', true) as $child)
-                                        <a href="{{ $child->url }}" class="block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-gray-700 transition"
-                                           @if($child->target === '_blank') target="_blank" @endif>
-                                            {{ $child->name }}
+                                    <a href="<?php echo e($menu->url); ?>" class="block px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition"><?php echo e($menu->name); ?></a>
+                                    <?php $__currentLoopData = $menu->children->where('is_active', true); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <a href="<?php echo e($child->url); ?>" class="block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-gray-700 transition"
+                                           <?php if($child->target === '_blank'): ?> target="_blank" <?php endif; ?>>
+                                            <?php echo e($child->name); ?>
+
                                         </a>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>
                             </div>
-                        @else
-                            <a href="{{ $menu->url }}"
+                        <?php else: ?>
+                            <a href="<?php echo e($menu->url); ?>"
                                class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-50 dark:hover:bg-gray-700 transition"
-                               @if($menu->target === '_blank') target="_blank" @endif>
-                                {{ $menu->name }}
+                               <?php if($menu->target === '_blank'): ?> target="_blank" <?php endif; ?>>
+                                <?php echo e($menu->name); ?>
+
                             </a>
-                        @endif
-                    @endforeach
+                        <?php endif; ?>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </nav>
 
-                {{-- Right Actions --}}
+                
                 <div class="flex items-center space-x-2 ml-auto">
-                    {{-- Search --}}
+                    
                     <button @click="searchOpen = !searchOpen" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition" aria-label="Cari">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </button>
 
-                    {{-- Dark Mode Toggle --}}
+                    
                     <button @click="toggle()" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition" aria-label="Toggle dark mode">
                         <template x-if="!dark">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.005 9.005 0 0012 21a9.005 9.005 0 008.354-5.646z"/></svg>
@@ -109,28 +111,28 @@
                         </template>
                     </button>
 
-                    {{-- Auth --}}
-                    @auth
+                    
+                    <?php if(auth()->guard()->check()): ?>
                         <div x-data="{ open: false }" class="relative">
                             <button @click="open = !open" class="flex items-center space-x-1 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                                <img src="{{ auth()->user()->avatar_url ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) }}" alt="" class="w-6 h-6 rounded-full">
-                                <span class="hidden sm:inline">{{ Str::limit(auth()->user()->name, 15) }}</span>
+                                <img src="<?php echo e(auth()->user()->avatar_url ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name)); ?>" alt="" class="w-6 h-6 rounded-full">
+                                <span class="hidden sm:inline"><?php echo e(Str::limit(auth()->user()->name, 15)); ?></span>
                             </button>
                             <div x-show="open" @click.away="open = false" x-cloak
                                  class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
-                                @if(auth()->user()->hasRole('admin'))
-                                    <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600">Admin Panel</a>
-                                @endif
-                                <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600">Profil</a>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
+                                <?php if(auth()->user()->hasRole('admin')): ?>
+                                    <a href="<?php echo e(route('admin.dashboard')); ?>" class="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600">Admin Panel</a>
+                                <?php endif; ?>
+                                <a href="<?php echo e(route('profile.edit')); ?>" class="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600">Profil</a>
+                                <form method="POST" action="<?php echo e(route('logout')); ?>">
+                                    <?php echo csrf_field(); ?>
                                     <button type="submit" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600">Logout</button>
                                 </form>
                             </div>
                         </div>
-                    @endauth
+                    <?php endif; ?>
 
-                    {{-- Mobile Menu Toggle --}}
+                    
                     <button @click="mobileMenu = !mobileMenu" class="md:hidden p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition" aria-label="Menu">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
@@ -138,56 +140,58 @@
             </div>
         </div>
 
-        {{-- Mobile Nav --}}
+        
         <div x-show="mobileMenu" x-cloak x-transition class="md:hidden border-t dark:border-gray-700 bg-white dark:bg-gray-800 max-h-[70vh] overflow-y-auto">
             <div class="px-4 py-3 space-y-1">
-                @foreach($headerMenus as $menu)
-                    @if($menu->children->count())
+                <?php $__currentLoopData = $headerMenus; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $menu): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php if($menu->children->count()): ?>
                         <div x-data="{ open: false }">
                             <button @click="open = !open" class="w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700">
-                                <span>{{ $menu->name }}</span>
+                                <span><?php echo e($menu->name); ?></span>
                                 <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                             </button>
                             <div x-show="open" x-cloak x-collapse class="ml-4 space-y-1">
-                                <a href="{{ $menu->url }}" class="block px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">{{ $menu->name }}</a>
-                                @foreach($menu->children->where('is_active', true) as $child)
-                                    <a href="{{ $child->url }}" class="block px-3 py-1.5 rounded-md text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
-                                       @if($child->target === '_blank') target="_blank" @endif>
-                                        {{ $child->name }}
+                                <a href="<?php echo e($menu->url); ?>" class="block px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"><?php echo e($menu->name); ?></a>
+                                <?php $__currentLoopData = $menu->children->where('is_active', true); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <a href="<?php echo e($child->url); ?>" class="block px-3 py-1.5 rounded-md text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
+                                       <?php if($child->target === '_blank'): ?> target="_blank" <?php endif; ?>>
+                                        <?php echo e($child->name); ?>
+
                                     </a>
-                                @endforeach
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </div>
                         </div>
-                    @else
-                        <a href="{{ $menu->url }}" class="block px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700"
-                           @if($menu->target === '_blank') target="_blank" @endif>
-                            {{ $menu->name }}
+                    <?php else: ?>
+                        <a href="<?php echo e($menu->url); ?>" class="block px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700"
+                           <?php if($menu->target === '_blank'): ?> target="_blank" <?php endif; ?>>
+                            <?php echo e($menu->name); ?>
+
                         </a>
-                    @endif
-                @endforeach
+                    <?php endif; ?>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
         </div>
     </header>
 
-    {{-- Search Modal --}}
+    
     <div x-show="searchOpen" x-cloak x-transition.opacity class="fixed inset-0 z-[60] bg-black/50 flex items-start justify-center pt-24 px-4" @click.self="searchOpen = false" @keydown.escape.window="searchOpen = false">
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl p-6" @click.stop>
-            <form action="{{ route('search.search') }}" method="GET" class="flex items-center space-x-3">
+            <form action="<?php echo e(route('search.search')); ?>" method="GET" class="flex items-center space-x-3">
                 <svg class="w-6 h-6 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari berita, artikel, topik..."
+                <input type="text" name="q" value="<?php echo e(request('q')); ?>" placeholder="Cari berita, artikel, topik..."
                        class="flex-1 bg-transparent border-none outline-none text-lg placeholder-gray-400 dark:text-white" autofocus>
                 <button type="submit" class="px-4 py-2 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-800 transition">Cari</button>
             </form>
         </div>
     </div>
 
-    {{-- Breaking News Ticker --}}
-    @php
+    
+    <?php
         $tickerItems = $breakingNewsItems->map(fn($item) => [
             'title' => $item->title,
             'url' => $item->url ?? ($item->post ? route('post.show', $item->post->slug) : '#'),
         ])->toArray();
-    @endphp
+    ?>
     <div class="bg-red-600 text-white overflow-hidden">
         <div class="max-w-7xl mx-auto flex items-center h-10">
             <div class="flex-shrink-0 px-4 py-2 bg-red-700 font-bold text-xs uppercase tracking-wider flex items-center space-x-1 h-full">
@@ -195,83 +199,104 @@
                 <span>Breaking News</span>
             </div>
             <div class="flex-1 overflow-hidden relative h-full flex items-center group">
-                @if(count($tickerItems) > 0)
+                <?php if(count($tickerItems) > 0): ?>
                     <div class="ticker-wrap flex items-center whitespace-nowrap animate-ticker"
-                         style="--ticker-count: {{ count($tickerItems) }}">
-                        @foreach($tickerItems as $item)
-                            <a href="{{ $item['url'] }}" class="inline-flex items-center px-6 text-sm font-medium hover:underline">
+                         style="--ticker-count: <?php echo e(count($tickerItems)); ?>">
+                        <?php $__currentLoopData = $tickerItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <a href="<?php echo e($item['url']); ?>" class="inline-flex items-center px-6 text-sm font-medium hover:underline">
                                 <span class="w-1.5 h-1.5 bg-white rounded-full mr-3 flex-shrink-0"></span>
-                                {{ $item['title'] }}
+                                <?php echo e($item['title']); ?>
+
                             </a>
-                        @endforeach
-                        @foreach($tickerItems as $item)
-                            <a href="{{ $item['url'] }}" class="inline-flex items-center px-6 text-sm font-medium hover:underline">
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php $__currentLoopData = $tickerItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <a href="<?php echo e($item['url']); ?>" class="inline-flex items-center px-6 text-sm font-medium hover:underline">
                                 <span class="w-1.5 h-1.5 bg-white rounded-full mr-3 flex-shrink-0"></span>
-                                {{ $item['title'] }}
+                                <?php echo e($item['title']); ?>
+
                             </a>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
-                @else
+                <?php else: ?>
                     <span class="px-4 text-sm">Selamat datang di Poros Aktual - Portal Berita Terpercaya</span>
-                @endif
+                <?php endif; ?>
             </div>
         </div>
     </div>
 
-    {{-- Main Content --}}
+    
     <main class="flex-1">
-        @yield('content')
+        <?php echo $__env->yieldContent('content'); ?>
     </main>
 
-    {{-- Before Footer Ad --}}
+    
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
-        <x-ad-slot location="footer" />
+        <?php if (isset($component)) { $__componentOriginal43e1d90ca5f26d2b3f1aa3bef8ea2805 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal43e1d90ca5f26d2b3f1aa3bef8ea2805 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.ad-slot','data' => ['location' => 'footer']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('ad-slot'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['location' => 'footer']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal43e1d90ca5f26d2b3f1aa3bef8ea2805)): ?>
+<?php $attributes = $__attributesOriginal43e1d90ca5f26d2b3f1aa3bef8ea2805; ?>
+<?php unset($__attributesOriginal43e1d90ca5f26d2b3f1aa3bef8ea2805); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal43e1d90ca5f26d2b3f1aa3bef8ea2805)): ?>
+<?php $component = $__componentOriginal43e1d90ca5f26d2b3f1aa3bef8ea2805; ?>
+<?php unset($__componentOriginal43e1d90ca5f26d2b3f1aa3bef8ea2805); ?>
+<?php endif; ?>
     </div>
 
-    {{-- Footer --}}
+    
     <footer style="background-color: #013F99" class="text-gray-300 mt-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                {{-- Brand --}}
+                
                 <div>
-                    @if(!empty($settings['site_footer_logo']))
-                        <img src="{{ asset('storage/' . $settings['site_footer_logo']) }}" alt="{{ $settings['site_name'] ?? 'Poros Aktual' }}" class="h-10 mb-3">
-                    @else
+                    <?php if(!empty($settings['site_footer_logo'])): ?>
+                        <img src="<?php echo e(asset('storage/' . $settings['site_footer_logo'])); ?>" alt="<?php echo e($settings['site_name'] ?? 'Poros Aktual'); ?>" class="h-10 mb-3">
+                    <?php else: ?>
                         <span class="text-2xl font-extrabold">
                             <span class="text-white">Poros</span>
                             <span class="text-red-400">Aktual</span>
                         </span>
-                    @endif
+                    <?php endif; ?>
                     <p class="mt-3 text-sm text-gray-400 leading-relaxed">
                         Portal berita terpercaya dengan informasi terkini dari Indonesia dan dunia.
                     </p>
                 </div>
 
-                {{-- Footer Menus (no sub-menus) --}}
-                @foreach($footerMenus->whereNull('parent_id')->groupBy('location') as $location => $menus)
+                
+                <?php $__currentLoopData = $footerMenus->whereNull('parent_id')->groupBy('location'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $location => $menus): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div>
                         <h3 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">
-                            @if($location === 'header') Navigasi
-                            @elseif($location === 'footer') Info
-                            @elseif($location === 'sidebar') Lainnya
-                            @else {{ $location }} @endif
+                            <?php if($location === 'header'): ?> Navigasi
+                            <?php elseif($location === 'footer'): ?> Info
+                            <?php elseif($location === 'sidebar'): ?> Lainnya
+                            <?php else: ?> <?php echo e($location); ?> <?php endif; ?>
                         </h3>
                         <ul class="space-y-2 text-sm">
-                            @foreach($menus as $menu)
+                            <?php $__currentLoopData = $menus; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $menu): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <li>
-                                    <a href="{{ $menu->url }}" class="hover:text-white transition"
-                                       @if($menu->target === '_blank') target="_blank" @endif>{{ $menu->name }}</a>
+                                    <a href="<?php echo e($menu->url); ?>" class="hover:text-white transition"
+                                       <?php if($menu->target === '_blank'): ?> target="_blank" <?php endif; ?>><?php echo e($menu->name); ?></a>
                                 </li>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </ul>
                     </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-                {{-- Hubungi Kami --}}
+                
                 <div>
                     <h3 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Hubungi Kami</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="{{ route('page.show', 'kontak') }}" class="hover:text-white transition">Kontak & Beriklan</a></li>
+                        <li><a href="<?php echo e(route('page.show', 'kontak')); ?>" class="hover:text-white transition">Kontak & Beriklan</a></li>
                     </ul>
                     <div class="flex items-center space-x-3 mt-4">
                         <a href="#" class="hover:text-white transition" aria-label="Facebook">
@@ -290,9 +315,10 @@
                 </div>
             </div>
 
-            {{-- Copyright --}}
+            
             <div class="mt-10 pt-8 border-t border-blue-800 text-center text-sm text-gray-300">
-                {!! $settings['site_footer'] ?? '&copy; ' . date('Y') . ' ' . config('app.name', 'Poros Aktual') . '. All rights reserved.' !!}
+                <?php echo $settings['site_footer'] ?? '&copy; ' . date('Y') . ' ' . config('app.name', 'Poros Aktual') . '. All rights reserved.'; ?>
+
             </div>
         </div>
     </footer>
@@ -311,9 +337,9 @@
         });
     </script>
 
-    {{-- PWA Service Worker + Install Banner --}}
+    
     <div x-data="pwaInstall()" x-cloak>
-        {{-- Floating Install Button --}}
+        
         <button x-show="canInstall && !showBanner" x-cloak
                 x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="scale-0 opacity-0"
@@ -327,7 +353,7 @@
             </svg>
         </button>
 
-        {{-- Install Banner --}}
+        
         <div x-show="showBanner" x-cloak
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="translate-y-full opacity-0"
@@ -337,7 +363,7 @@
              x-transition:leave-end="translate-y-full opacity-0"
              class="fixed bottom-0 left-0 right-0 z-50 p-4">
             <div class="max-w-lg mx-auto rounded-xl shadow-2xl p-4 flex items-center space-x-4" style="background-color:#fff;border:1px solid #e5e7eb">
-                <img src="{{ asset('images/android-chrome-192x192.png') }}" alt="Poros Aktual" class="w-12 h-12 rounded-lg flex-shrink-0">
+                <img src="<?php echo e(asset('images/android-chrome-192x192.png')); ?>" alt="Poros Aktual" class="w-12 h-12 rounded-lg flex-shrink-0">
                 <div class="flex-1 min-w-0">
                     <p class="font-semibold text-sm" style="color:#111827">Pasang Poros Aktual</p>
                     <p class="text-xs truncate" style="color:#6b7280">Akses berita lebih cepat &amp; membaca offline</p>
@@ -400,6 +426,7 @@
         }
     </script>
 
-    @stack('scripts')
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html>
+<?php /**PATH E:\laragon\www\porosaktual\resources\views/layouts/frontend.blade.php ENDPATH**/ ?>

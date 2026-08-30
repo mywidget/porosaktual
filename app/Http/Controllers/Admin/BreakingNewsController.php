@@ -54,6 +54,7 @@ class BreakingNewsController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'url' => 'nullable|string|max:500',
+            'post_id' => 'nullable|exists:posts,id',
             'is_active' => 'nullable|boolean',
             'priority' => 'required|integer|min:0',
             'start_date' => 'required|date',
@@ -61,6 +62,11 @@ class BreakingNewsController extends Controller
         ]);
 
         $validated['is_active'] = $validated['is_active'] ?? true;
+
+        if (!empty($validated['post_id']) && empty($validated['url'])) {
+            $post = \App\Models\Post::find($validated['post_id']);
+            $validated['url'] = route('post.show', $post->slug);
+        }
 
         BreakingNews::create($validated);
 
@@ -77,11 +83,17 @@ class BreakingNewsController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'url' => 'nullable|string|max:500',
+            'post_id' => 'nullable|exists:posts,id',
             'is_active' => 'nullable|boolean',
             'priority' => 'required|integer|min:0',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
+
+        if (!empty($validated['post_id']) && empty($validated['url'])) {
+            $post = \App\Models\Post::find($validated['post_id']);
+            $validated['url'] = route('post.show', $post->slug);
+        }
 
         $breakingNews->update($validated);
 

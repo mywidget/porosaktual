@@ -74,7 +74,11 @@
     <div x-data="viewsChart()" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Statistik Views</h2>
-            <div class="flex space-x-2">
+            <div class="flex items-center space-x-2">
+                <form method="POST" action="{{ route('admin.dashboard.clear-views') }}" onsubmit="return confirm('Yakin ingin mereset semua data views?')">
+                    @csrf
+                    <button type="submit" class="px-3 py-1 rounded-lg text-sm font-medium transition bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50">Reset Views</button>
+                </form>
                 <button @click="loadData('7d')" :class="period === '7d' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'" class="px-3 py-1 rounded-lg text-sm font-medium transition">7 Hari</button>
                 <button @click="loadData('30d')" :class="period === '30d' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'" class="px-3 py-1 rounded-lg text-sm font-medium transition">30 Hari</button>
                 <button @click="loadData('90d')" :class="period === '90d' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'" class="px-3 py-1 rounded-lg text-sm font-medium transition">90 Hari</button>

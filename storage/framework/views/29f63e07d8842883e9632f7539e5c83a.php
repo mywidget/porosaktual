@@ -1,44 +1,41 @@
-@extends('layouts.admin')
+<?php $__env->startSection('title', 'Edit Breaking News'); ?>
 
-@section('title', 'Tambah Breaking News')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="max-w-2xl">
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Tambah Breaking News</h1>
-        <a href="{{ route('admin.breaking-news.index') }}" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg transition">Batal</a>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Edit Breaking News</h1>
+        <a href="<?php echo e(route('admin.breaking-news.index')); ?>" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg transition">Batal</a>
     </div>
 
-    @if($errors->any())
+    <?php if($errors->any()): ?>
         <div class="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
             <ul class="text-sm text-red-700 dark:text-red-400 list-disc list-inside">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
+                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <li><?php echo e($error); ?></li>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </ul>
         </div>
-    @endif
+    <?php endif; ?>
 
-    <form method="POST" action="{{ route('admin.breaking-news.store') }}">
-        @csrf
+    <form method="POST" action="<?php echo e(route('admin.breaking-news.update', $breakingNews->id)); ?>">
+        <?php echo csrf_field(); ?>
+        <?php echo method_field('PUT'); ?>
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700 space-y-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Judul <span class="text-red-500">*</span></label>
-                <input type="text" name="title" value="{{ old('title') }}" required
-                       class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                       placeholder="Judul breaking news">
+                <input type="text" name="title" value="<?php echo e(old('title', $breakingNews->title)); ?>" required
+                       class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL</label>
-                <input type="text" name="url" value="{{ old('url') }}" id="urlField"
-                       class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                       placeholder="Otomatis terisi dari berita terkait">
+                <input type="text" name="url" value="<?php echo e(old('url', $breakingNews->url)); ?>" id="urlField"
+                       class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
             </div>
 
             <div x-data="{
-                posts: @js(\App\Models\Post::latest()->limit(100)->get()->map(fn($p) => ['id' => $p->id, 'title' => $p->title, 'url' => route('post.show', $p->slug)])),
-                selectedPost: '{{ old('post_id') }}',
+                posts: <?php echo \Illuminate\Support\Js::from(\App\Models\Post::latest()->limit(100)->get()->map(fn($p) => ['id' => $p->id, 'title' => $p->title, 'url' => route('post.show', $p->slug)]))->toHtml() ?>,
+                selectedPost: '<?php echo e(old('post_id', $breakingNews->post_id)); ?>',
                 selectPost(id) {
                     this.selectedPost = id;
                     if (id) {
@@ -61,12 +58,12 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal Mulai <span class="text-red-500">*</span></label>
-                    <input type="datetime-local" name="start_date" value="{{ old('start_date', now()->format('Y-m-d\TH:i')) }}" required
+                    <input type="datetime-local" name="start_date" value="<?php echo e(old('start_date', $breakingNews->start_date?->format('Y-m-d\TH:i'))); ?>" required
                            class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal Akhir <span class="text-red-500">*</span></label>
-                    <input type="datetime-local" name="end_date" value="{{ old('end_date', now()->addDay()->format('Y-m-d\TH:i')) }}" required
+                    <input type="datetime-local" name="end_date" value="<?php echo e(old('end_date', $breakingNews->end_date?->format('Y-m-d\TH:i'))); ?>" required
                            class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
                 </div>
             </div>
@@ -74,23 +71,24 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Prioritas</label>
-                    <input type="number" name="priority" value="{{ old('priority', 0) }}" min="0"
+                    <input type="number" name="priority" value="<?php echo e(old('priority', $breakingNews->priority)); ?>" min="0"
                            class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                    <p class="text-xs text-gray-500 mt-1">Semakin tinggi semakin prioritas</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
                     <select name="is_active" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                        <option value="1" {{ old('is_active', 1) ? 'selected' : '' }}>Aktif</option>
-                        <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Nonaktif</option>
+                        <option value="1" <?php echo e(old('is_active', $breakingNews->is_active) ? 'selected' : ''); ?>>Aktif</option>
+                        <option value="0" <?php echo e(old('is_active', !$breakingNews->is_active) ? 'selected' : ''); ?>>Nonaktif</option>
                     </select>
                 </div>
             </div>
         </div>
 
-        <div class="mt-6 flex justify-end">
-            <button type="submit" class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition">Simpan</button>
+        <div class="mt-6 flex justify-end space-x-3">
+            <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">Perbarui</button>
         </div>
     </form>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\laragon\www\porosaktual\resources\views/admin/breaking-news/edit.blade.php ENDPATH**/ ?>

@@ -19,7 +19,7 @@ class DashboardController extends Controller
         $totalUsers = User::count();
         $totalComments = Comment::withTrashed()->count();
         $pendingComments = Comment::where('status', 'pending')->count();
-        $totalViews = Post::sum('views_count');
+        $totalViews = PostView::count();
 
         $viewsData = PostView::selectRaw('DATE(created_at) as date, COUNT(*) as count')
             ->where('created_at', '>=', now()->subDays(7))
@@ -74,5 +74,13 @@ class DashboardController extends Controller
         }
 
         return response()->json(['labels' => $labels, 'data' => $values]);
+    }
+
+    public function clearViews()
+    {
+        PostView::truncate();
+        Post::query()->update(['views_count' => 0]);
+
+        return back()->with('success', 'Statistik views berhasil direset.');
     }
 }
