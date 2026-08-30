@@ -28,10 +28,10 @@
                     <img src="{{ $heroPost->featured_image_url }}" alt="{{ $heroPost->title }}"
                          class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 right-0 p-6">
-                        <span class="inline-block px-3 py-1 bg-blue-700 text-white text-xs font-semibold rounded-full mb-3">{{ $heroPost->category->name }}</span>
-                        <h1 class="text-2xl md:text-3xl font-bold text-white leading-tight group-hover:text-blue-300 transition">{{ $heroPost->title }}</h1>
-                        <div class="flex items-center space-x-3 mt-3 text-gray-300 text-sm">
+                    <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+                        <span class="inline-block px-3 py-1 bg-blue-700 text-white text-xs font-semibold rounded-full mb-2 sm:mb-3">{{ $heroPost->category->name }}</span>
+                        <h1 class="text-lg sm:text-2xl md:text-3xl font-bold text-white leading-tight line-clamp-2 sm:line-clamp-3 group-hover:text-blue-300 transition">{{ $heroPost->title }}</h1>
+                        <div class="flex items-center space-x-3 mt-2 sm:mt-3 text-gray-300 text-xs sm:text-sm">
                             <span>{{ $heroPost->author->name }}</span>
                             <span>&middot;</span>
                             <span>{{ $heroPost->published_at->diffForHumans() }}</span>
@@ -49,9 +49,9 @@
                         <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}"
                              class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                        <div class="absolute bottom-0 left-0 right-0 p-4">
-                            <span class="inline-block px-2 py-0.5 bg-blue-700 text-white text-xs font-semibold rounded-full mb-2">{{ $post->category->name }}</span>
-                            <h3 class="text-sm font-bold text-white leading-snug group-hover:text-blue-300 transition">{{ Str::limit($post->title, 80) }}</h3>
+                        <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+                            <span class="inline-block px-2 py-0.5 bg-blue-700 text-white text-xs font-semibold rounded-full mb-1 sm:mb-2">{{ $post->category->name }}</span>
+                            <h3 class="text-xs sm:text-sm font-bold text-white leading-snug line-clamp-2 group-hover:text-blue-300 transition">{{ Str::limit($post->title, 80) }}</h3>
                         </div>
                     </a>
                 @endforeach
