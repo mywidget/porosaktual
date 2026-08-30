@@ -43,6 +43,7 @@ class PostController extends Controller
         $this->postService->incrementViews($post, $request);
 
         $relatedPosts = $this->postService->getRelatedPosts($post, 5);
+        $popularPosts = $this->postService->getPopularPostsThisWeek(10);
         $comments = $this->commentService->getApprovedComments($post->id);
         $commentCount = $this->commentService->getCommentCount($post->id);
 
@@ -65,6 +66,7 @@ class PostController extends Controller
         return view('frontend.post.show', compact(
             'post',
             'relatedPosts',
+            'popularPosts',
             'comments',
             'commentCount',
             'seoMeta',
