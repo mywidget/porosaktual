@@ -109,7 +109,8 @@
             @if($post->featured_image_url)
                 <figure class="mb-8">
                     <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}"
-                         class="w-full rounded-xl object-cover aspect-[16/9]">
+                         class="w-full rounded-xl object-cover aspect-[16/9]"
+                         onerror="this.onerror=null;this.src='{{ asset('images/no-image.svg') }}'">
                     @if($post->image_caption)
                         <figcaption class="text-center text-sm text-gray-500 mt-2 italic">{{ $post->image_caption }}</figcaption>
                     @endif

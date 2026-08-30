@@ -26,7 +26,8 @@
             <div class="lg:col-span-2">
                 <a href="{{ route('post.show', $heroPost->slug) }}" class="group block relative rounded-2xl overflow-hidden aspect-[16/9]">
                     <img src="{{ $heroPost->featured_image_url }}" alt="{{ $heroPost->title }}"
-                         class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                         class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                         onerror="this.onerror=null;this.src='{{ asset('images/no-image.svg') }}'">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
                         <span class="inline-block px-3 py-1 bg-blue-700 text-white text-xs font-semibold rounded-full mb-2 sm:mb-3">{{ $heroPost->category->name }}</span>
@@ -47,7 +48,8 @@
                 @foreach($featuredPosts->take(3) as $post)
                     <a href="{{ route('post.show', $post->slug) }}" class="group block relative rounded-xl overflow-hidden aspect-[16/9]">
                         <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}"
-                             class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                             class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                             onerror="this.onerror=null;this.src='{{ asset('images/no-image.svg') }}'">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                         <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
                             <span class="inline-block px-2 py-0.5 bg-blue-700 text-white text-xs font-semibold rounded-full mb-1 sm:mb-2">{{ $post->category->name }}</span>
@@ -233,7 +235,8 @@
                     @if($video->youtube_id)
                         <iframe src="https://www.youtube.com/embed/{{ $video->youtube_id }}" class="w-full h-full" allowfullscreen loading="lazy"></iframe>
                     @else
-                        <img src="{{ $video->featured_image_url }}" alt="{{ $video->title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <img src="{{ $video->featured_image_url }}" alt="{{ $video->title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                             onerror="this.onerror=null;this.src='{{ asset('images/no-image.svg') }}'">
                     @endif
                 </div>
                 <h3 class="font-semibold group-hover:text-blue-700 transition">{{ Str::limit($video->title, 70) }}</h3>

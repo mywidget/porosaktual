@@ -118,7 +118,7 @@ class Post extends Model
 
     public function getFeaturedImageUrlAttribute(): string
     {
-        if ($this->featured_image) {
+        if ($this->featured_image && \Illuminate\Support\Facades\Storage::disk('public')->exists($this->featured_image)) {
             return asset('storage/' . $this->featured_image);
         }
 
