@@ -171,12 +171,14 @@
 
     {{-- Search Modal --}}
     <div x-show="searchOpen" x-cloak x-transition.opacity class="fixed inset-0 z-[60] bg-black/50 flex items-start justify-center pt-24 px-4" @click.self="searchOpen = false" @keydown.escape.window="searchOpen = false">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl p-6" @click.stop>
-            <form action="{{ route('search.search') }}" method="GET" class="flex items-center space-x-3">
-                <svg class="w-6 h-6 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari berita, artikel, topik..."
-                       class="flex-1 bg-transparent border-none outline-none text-lg placeholder-gray-400 dark:text-white" autofocus>
-                <button type="submit" class="px-4 py-2 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-800 transition">Cari</button>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl p-4 sm:p-6" @click.stop>
+            <form action="{{ route('search.search') }}" method="GET" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <div class="flex items-center flex-1">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari berita, artikel, topik..."
+                           class="flex-1 bg-transparent border-none outline-none text-base sm:text-lg placeholder-gray-400 dark:text-white ml-3" autofocus>
+                </div>
+                <button type="submit" class="w-full sm:w-auto px-6 py-2.5 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-800 transition">Cari</button>
             </form>
         </div>
     </div>
