@@ -12,9 +12,12 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::with('children.posts')
+        $categories = Category::with(['children' => function ($query) {
+                $query->withCount('posts');
+            }])
             ->whereNull('parent_id')
             ->withCount('posts')
+            ->withSum('children.posts', 'views_count')
             ->orderBy('sort_order')
             ->get();
 
@@ -43,7 +46,7 @@ class CategoryController extends Controller
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
-        $validated['is_active'] = $validated['is_active'] ?? true;
+        $validated['is_active'] = $request->boolean('is_active');
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
 
         if ($request->hasFile('image')) {
@@ -82,6 +85,8 @@ class CategoryController extends Controller
         if ($validated['name'] !== $category->name) {
             $validated['slug'] = Str::slug($validated['name']);
         }
+
+        $validated['is_active'] = $request->boolean('is_active');
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('categories', 'public');

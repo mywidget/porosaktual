@@ -9,12 +9,13 @@
         <span class="text-sm text-gray-500 dark:text-gray-400">{{ now()->format('l, d F Y') }}</span>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Berita</p>
-                    <p class="text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ number_format($totalPosts ?? 0) }}</p>                </div>
+                    <p class="text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ number_format($totalPosts ?? 0) }}</p>
+                </div>
                 <div class="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-full">
                     <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
                 </div>
@@ -24,15 +25,20 @@
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
             <div class="flex items-center justify-between">
                 <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Views</p>
+                    <p class="text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ number_format($totalViews ?? 0) }}</p>
+                </div>
+                <div class="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-full">
+                    <svg class="w-8 h-8 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between">
+                <div>
                     <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Wartawan</p>
                     <p class="text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ number_format($totalUsers ?? 0) }}</p>
-                    <p class="text-sm text-green-600 dark:text-green-400 mt-2">
-                        <span class="inline-flex items-center">
-                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
-                            {{ $writersChange ?? '+3%' }}
-                        </span>
-                        dari bulan lalu
-                    </p>
                 </div>
                 <div class="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-full">
                     <svg class="w-8 h-8 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -65,17 +71,17 @@
         </div>
     </div>
 
-    <div x-data="{ period: '7d' }" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
+    <div x-data="viewsChart()" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Statistik Views</h2>
             <div class="flex space-x-2">
-                <button @click="period = '7d'" :class="period === '7d' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'" class="px-3 py-1 rounded-lg text-sm font-medium transition">7 Hari</button>
-                <button @click="period = '30d'" :class="period === '30d' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'" class="px-3 py-1 rounded-lg text-sm font-medium transition">30 Hari</button>
-                <button @click="period = '90d'" :class="period === '90d' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'" class="px-3 py-1 rounded-lg text-sm font-medium transition">90 Hari</button>
+                <button @click="loadData('7d')" :class="period === '7d' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'" class="px-3 py-1 rounded-lg text-sm font-medium transition">7 Hari</button>
+                <button @click="loadData('30d')" :class="period === '30d' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'" class="px-3 py-1 rounded-lg text-sm font-medium transition">30 Hari</button>
+                <button @click="loadData('90d')" :class="period === '90d' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'" class="px-3 py-1 rounded-lg text-sm font-medium transition">90 Hari</button>
             </div>
         </div>
-        <div id="views-chart" class="h-80 bg-gray-50 dark:bg-gray-900 rounded-lg flex items-center justify-center">
-            <span class="text-gray-400 dark:text-gray-500 text-sm">Chart placeholder - integrate dengan chart library</span>
+        <div class="relative h-80">
+            <canvas id="viewsChart"></canvas>
         </div>
     </div>
 
@@ -198,3 +204,50 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+function viewsChart() {
+    return {
+        period: '7d',
+        chart: null,
+        init() {
+            this.loadData('7d');
+        },
+        async loadData(p) {
+            this.period = p;
+            const res = await fetch('{{ route("admin.dashboard.views-data") }}?period=' + p);
+            const json = await res.json();
+            const ctx = document.getElementById('viewsChart');
+            if (this.chart) this.chart.destroy();
+            this.chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: json.labels,
+                    datasets: [{
+                        label: 'Views',
+                        data: json.data,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59,130,246,0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#3b82f6',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { beginAtZero: true, grid: { color: 'rgba(156,163,175,0.2)' } }
+                    }
+                }
+            });
+        }
+    }
+}
+</script>
+@endpush

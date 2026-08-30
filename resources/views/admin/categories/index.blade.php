@@ -18,15 +18,22 @@
         </div>
         <div class="p-6">
             @forelse($categories ?? [] as $category)
-                <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-3 hover:border-blue-300 dark:hover:border-blue-600 transition">
+                <div class="border rounded-lg p-4 mb-3 transition {{ $category->is_active ? 'border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600' : 'border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-900/10' }}">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center {{ $category->is_active ? 'bg-blue-100 dark:bg-blue-900/30' : 'bg-red-100 dark:bg-red-900/30' }}">
+                                <svg class="w-5 h-5 {{ $category->is_active ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
                             </div>
                             <div>
-                                <h3 class="text-sm font-semibold text-gray-900 dark:text-white">{{ $category->name }}</h3>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Slug: {{ $category->slug }} &middot; {{ $category->posts_count ?? 0 }} berita</p>
+                                <div class="flex items-center space-x-2">
+                                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white">{{ $category->name }}</h3>
+                                    @if($category->is_active)
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Aktif</span>
+                                    @else
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">Tidak Aktif</span>
+                                    @endif
+                                </div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Slug: {{ $category->slug }} &middot; {{ ($category->posts_count ?? 0) + ($category->children->sum('posts_count') ?? 0) }} berita</p>
                             </div>
                         </div>
                         <div class="flex items-center space-x-2">
@@ -51,7 +58,14 @@
                                             <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                         </div>
                                         <div>
-                                            <h4 class="text-sm font-medium text-gray-900 dark:text-white">{{ $child->name }}</h4>
+                                            <div class="flex items-center space-x-2">
+                                                <h4 class="text-sm font-medium text-gray-900 dark:text-white">{{ $child->name }}</h4>
+                                                @if($child->is_active)
+                                                    <span class="px-1.5 py-0.5 text-xs rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Aktif</span>
+                                                @else
+                                                    <span class="px-1.5 py-0.5 text-xs rounded-full bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">Nonaktif</span>
+                                                @endif
+                                            </div>
                                             <p class="text-xs text-gray-500 dark:text-gray-400">{{ $child->posts_count ?? 0 }} berita</p>
                                         </div>
                                     </div>

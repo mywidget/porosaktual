@@ -54,6 +54,7 @@ Route::middleware('auth')->group(function () {
 // Admin Routes
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/views-data', [DashboardController::class, 'viewsData'])->name('dashboard.views-data');
 
     Route::middleware('permission:manage-posts')->group(function () {
         Route::resource('posts', AdminPostController::class);

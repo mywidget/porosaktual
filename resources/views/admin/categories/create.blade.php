@@ -69,7 +69,7 @@
                         <label for="parent_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kategori Induk</label>
                         <select name="parent_id" id="parent_id" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
                             <option value="">Tidak ada (Kategori Utama)</option>
-                            @foreach($categories ?? [] as $category)
+                            @foreach($parentCategories ?? [] as $category)
                                 <option value="{{ $category->id }}" {{ old('parent_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                             @endforeach
                         </select>
