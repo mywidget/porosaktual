@@ -366,6 +366,27 @@ $value = context()->get($__contextArgs[0]); ?>' => 'https://schema.org',
             </div>
 
             
+            <?php if(isset($popularPosts) && $popularPosts->count()): ?>
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                    <h3 class="font-bold text-sm uppercase tracking-wider text-gray-500 mb-4 flex items-center space-x-2">
+                        <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <span>Populer Minggu Ini</span>
+                    </h3>
+                    <div class="space-y-4">
+                        <?php $__currentLoopData = $popularPosts->take(5); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $popular): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <a href="<?php echo e(route('post.show', $popular->slug)); ?>" class="flex items-start space-x-3 group <?php echo e($popular->id === $post->id ? 'opacity-50 pointer-events-none' : ''); ?>">
+                                <span class="text-2xl font-extrabold text-gray-200 dark:text-gray-600 group-hover:text-blue-700 transition leading-none"><?php echo e($index + 1); ?></span>
+                                <div>
+                                    <h4 class="text-sm font-semibold leading-snug group-hover:text-blue-700 transition"><?php echo e(Str::limit($popular->title, 70)); ?></h4>
+                                    <span class="text-xs text-gray-500 mt-1 block"><?php echo e($popular->published_at->diffForHumans()); ?></span>
+                                </div>
+                            </a>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            
             <?php if (isset($component)) { $__componentOriginal43e1d90ca5f26d2b3f1aa3bef8ea2805 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal43e1d90ca5f26d2b3f1aa3bef8ea2805 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.ad-slot','data' => ['location' => 'sidebar','limit' => 2]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
