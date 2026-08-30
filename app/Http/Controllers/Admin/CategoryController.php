@@ -17,7 +17,6 @@ class CategoryController extends Controller
             }])
             ->whereNull('parent_id')
             ->withCount('posts')
-            ->withSum('children.posts', 'views_count')
             ->orderBy('sort_order')
             ->get();
 
