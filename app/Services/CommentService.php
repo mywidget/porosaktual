@@ -24,14 +24,14 @@ class CommentService
 
     public function approveComment(int $commentId): Comment
     {
-        $comment = Comment::findOrFail($commentId);
+        $comment = Comment::withTrashed()->findOrFail($commentId);
         $comment->update(['status' => 'approved']);
         return $comment;
     }
 
     public function rejectComment(int $commentId): Comment
     {
-        $comment = Comment::findOrFail($commentId);
+        $comment = Comment::withTrashed()->findOrFail($commentId);
         $comment->update(['status' => 'rejected']);
         return $comment;
     }

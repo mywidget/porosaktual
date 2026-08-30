@@ -85,7 +85,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::middleware('permission:manage-comments')->group(function () {
         Route::resource('comments', AdminCommentController::class)->only(['index', 'destroy']);
         Route::match(['post', 'patch'], 'comments/{comment}/approve', [AdminCommentController::class, 'approve'])->name('comments.approve');
-        Route::post('comments/{comment}/reject', [AdminCommentController::class, 'reject'])->name('comments.reject');
+        Route::match(['post', 'get'], 'comments/{comment}/reject', [AdminCommentController::class, 'reject'])->name('comments.reject');
     });
 
     Route::middleware('permission:manage-menus')->group(function () {

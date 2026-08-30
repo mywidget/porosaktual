@@ -38,23 +38,31 @@ class CommentController extends Controller
         return view('admin.comments.index', compact('comments'));
     }
 
-    public function approve(Comment $comment)
+    public function approve(int $comment)
     {
+        $comment = Comment::withTrashed()->findOrFail($comment);
         $this->commentService->approveComment($comment->id);
 
         return back()->with('success', 'Comment approved.');
     }
 
-    public function reject(Comment $comment)
+    public function reject(int $comment)
     {
+        $comment = Comment::withTrashed()->findOrFail($comment);
         $this->commentService->rejectComment($comment->id);
 
         return back()->with('success', 'Comment rejected.');
     }
 
-    public function destroy(Comment $comment)
+    public function destroy(int $comment)
     {
-        $comment->delete();
+        $comment = Comment::withTrashed()->findOrFail($comment);
+
+        if ($comment->trashed()) {
+            $comment->forceDelete();
+        } else {
+            $comment->delete();
+        }
 
         return back()->with('success', 'Comment deleted.');
     }

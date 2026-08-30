@@ -97,17 +97,27 @@ class AdvertisementController extends Controller
 
     public function update(Request $request, Advertisement $advertisement)
     {
-        $validated = $request->validate([
+        $rules = [
             'slot_id' => 'required|exists:advertisement_slots,id',
             'title' => 'required|string|max:255',
             'type' => 'required|in:adsense,banner,html_script,internal',
-            'banner_image' => 'required_if:type,banner|nullable|image|max:2048',
-            'html_code' => 'required_if:type,html_script|nullable|string',
+            'banner_image' => 'nullable|image|max:2048',
+            'html_code' => 'nullable|string',
             'url' => 'nullable|url|max:500',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'is_active' => 'nullable|boolean',
-        ]);
+        ];
+
+        if ($request->type === 'banner' && !$advertisement->banner_image) {
+            $rules['banner_image'] = 'required|image|max:2048';
+        }
+
+        if ($request->type === 'html_script' && !$advertisement->html_code) {
+            $rules['html_code'] = 'required|string';
+        }
+
+        $validated = $request->validate($rules);
 
         if ($request->hasFile('banner_image')) {
             $validated['banner_image'] = $request->file('banner_image')->store('advertisements', 'public');
