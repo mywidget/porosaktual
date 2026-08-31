@@ -54,7 +54,8 @@
                         @else
                             <a href="{{ route('post.show', $video->slug) }}">
                                 <img src="{{ $video->featured_image_url }}" alt="{{ $video->title }}"
-                                     class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                     class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                                     style="object-position: {{ $video->featured_image_position ?? 'center' }}">
                                 <div class="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition">
                                     <div class="w-14 h-14 bg-white/90 rounded-full flex items-center justify-center">
                                         <svg class="w-6 h-6 text-red-600 ml-1" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>

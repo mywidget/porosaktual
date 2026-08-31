@@ -39,6 +39,7 @@ class PageController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255',
             'content' => 'required|string',
             'excerpt' => 'nullable|string|max:500',
             'featured_image' => 'nullable|image|max:2048',
@@ -49,7 +50,7 @@ class PageController extends Controller
             'meta_keywords' => 'nullable|string|max:255',
         ]);
 
-        $validated['slug'] = Str::slug($validated['title']);
+        $validated['slug'] = Str::slug($validated['slug'] ?? $validated['title']);
         $validated['author_id'] = auth()->id();
 
         if ($validated['status'] === 'published') {
@@ -74,6 +75,7 @@ class PageController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255',
             'content' => 'required|string',
             'excerpt' => 'nullable|string|max:500',
             'featured_image' => 'nullable|image|max:2048',
@@ -84,9 +86,7 @@ class PageController extends Controller
             'meta_keywords' => 'nullable|string|max:255',
         ]);
 
-        if ($validated['title'] !== $page->title) {
-            $validated['slug'] = Str::slug($validated['title']);
-        }
+        $validated['slug'] = Str::slug($validated['slug'] ?? $validated['title']);
 
         if ($request->hasFile('featured_image')) {
             $validated['featured_image'] = $request->file('featured_image')->store('pages', 'public');

@@ -156,17 +156,44 @@
                         </div>
                     </label>
                     <div x-show="imagePreview" class="space-y-2">
-                        <img :src="imagePreview" class="w-full h-40 object-cover rounded-lg" alt="Preview">
+                        <img :src="imagePreview" :style="'object-position:' + imagePosition" class="w-full aspect-video object-cover rounded-lg" alt="Preview">
                         <button type="button" @click="clearImage()" class="w-full px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-medium rounded transition">
                             Hapus Gambar
                         </button>
                     </div>
                     @if($post->featured_image && !old('featured_image'))
                         <div x-show="!imagePreview" class="space-y-2">
-                            <img src="{{ asset('storage/' . $post->featured_image) }}" class="w-full h-40 object-cover rounded-lg" alt="{{ $post->title }}">
+                            <img src="{{ asset('storage/' . $post->featured_image) }}" :style="'object-position:' + imagePosition" class="w-full aspect-video object-cover rounded-lg" alt="{{ $post->title }}">
                             <p class="text-xs text-gray-500 dark:text-gray-400">Gambar saat ini</p>
                         </div>
                     @endif
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Posisi Crop</label>
+                        <div class="flex space-x-2">
+                            <label class="flex-1 cursor-pointer" @click="imagePosition = 'top'">
+                                <input type="radio" name="featured_image_position" value="top" x-model="imagePosition" class="sr-only">
+                                <div :class="imagePosition === 'top' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'" class="border-2 rounded-lg p-3 text-center transition">
+                                    <svg class="w-8 h-8 mx-auto" :class="imagePosition === 'top' ? 'text-blue-500' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+                                    <span class="text-xs" :class="imagePosition === 'top' ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'">Atas</span>
+                                </div>
+                            </label>
+                            <label class="flex-1 cursor-pointer" @click="imagePosition = 'center'">
+                                <input type="radio" name="featured_image_position" value="center" x-model="imagePosition" class="sr-only">
+                                <div :class="imagePosition === 'center' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'" class="border-2 rounded-lg p-3 text-center transition">
+                                    <svg class="w-8 h-8 mx-auto" :class="imagePosition === 'center' ? 'text-blue-500' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h8"/></svg>
+                                    <span class="text-xs" :class="imagePosition === 'center' ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'">Tengah</span>
+                                </div>
+                            </label>
+                            <label class="flex-1 cursor-pointer" @click="imagePosition = 'bottom'">
+                                <input type="radio" name="featured_image_position" value="bottom" x-model="imagePosition" class="sr-only">
+                                <div :class="imagePosition === 'bottom' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'" class="border-2 rounded-lg p-3 text-center transition">
+                                    <svg class="w-8 h-8 mx-auto" :class="imagePosition === 'bottom' ? 'text-blue-500' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                    <span class="text-xs" :class="imagePosition === 'bottom' ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'">Bawah</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -234,6 +261,7 @@
             slug: '{{ old("slug", $post->slug) }}',
             status: '{{ old("status", $post->status) }}',
             imagePreview: null,
+            imagePosition: '{{ old("featured_image_position", $post->featured_image_position) }}',
             openGallery: false,
             quill: null,
 

@@ -156,6 +156,26 @@
         document.querySelector('form').addEventListener('submit', function() {
             contentHidden.value = quill.root.innerHTML;
         });
+
+        const titleInput = document.getElementById('title');
+        const slugInput = document.getElementById('slug');
+        const originalSlug = slugInput.value;
+        let slugManuallyEdited = false;
+
+        slugInput.addEventListener('input', function() {
+            slugManuallyEdited = true;
+        });
+
+        titleInput.addEventListener('input', function() {
+            if (!slugManuallyEdited) {
+                slugInput.value = this.value
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '');
+            }
+        });
     });
 </script>
 @endpush

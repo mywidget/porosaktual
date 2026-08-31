@@ -42,6 +42,12 @@
                     </div>
 
                     <div>
+                        <label for="slug" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Slug <span class="text-red-500">*</span></label>
+                        <input type="text" name="slug" id="slug" value="{{ old('slug') }}" required class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="slug-halaman">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Kosongkan untuk auto-generate dari judul</p>
+                    </div>
+
+                    <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Konten <span class="text-red-500">*</span></label>
                         <input type="hidden" name="content" id="content_hidden" value="{{ old('content') }}">
                         <div id="quill-editor" style="min-height:300px;"></div>
@@ -142,6 +148,25 @@
 
         document.querySelector('form').addEventListener('submit', function() {
             contentHidden.value = quill.root.innerHTML;
+        });
+
+        const titleInput = document.getElementById('title');
+        const slugInput = document.getElementById('slug');
+        let slugManuallyEdited = false;
+
+        slugInput.addEventListener('input', function() {
+            slugManuallyEdited = true;
+        });
+
+        titleInput.addEventListener('input', function() {
+            if (!slugManuallyEdited) {
+                slugInput.value = this.value
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '');
+            }
         });
     });
 </script>

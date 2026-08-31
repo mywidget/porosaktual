@@ -27,6 +27,7 @@
                 <a href="{{ route('post.show', $heroPost->slug) }}" class="group block relative rounded-2xl overflow-hidden aspect-[16/9]">
                     <img src="{{ $heroPost->featured_image_url }}" alt="{{ $heroPost->title }}"
                          class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                         style="object-position: {{ $heroPost->featured_image_position ?? 'center' }}"
                          onerror="this.onerror=null;this.src='{{ asset('images/no-image.svg') }}'">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
@@ -49,6 +50,7 @@
                     <a href="{{ route('post.show', $post->slug) }}" class="group block relative rounded-xl overflow-hidden aspect-[16/9]">
                         <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}"
                              class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                             style="object-position: {{ $post->featured_image_position ?? 'center' }}"
                              onerror="this.onerror=null;this.src='{{ asset('images/no-image.svg') }}'">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                         <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
@@ -184,7 +186,8 @@
             <div class="lg:col-span-2">
                 <a href="{{ route('post.show', $headline->slug) }}" class="group block relative rounded-2xl overflow-hidden aspect-[16/9]">
                     <img src="{{ $headline->featured_image_url }}" alt="{{ $headline->title }}"
-                         class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                         class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                         style="object-position: {{ $headline->featured_image_position ?? 'center' }}">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 right-0 p-6">
                         <span class="inline-block px-3 py-1 bg-blue-700 text-white text-xs font-semibold rounded-full mb-3">{{ $headline->category->name }}</span>
@@ -202,7 +205,8 @@
                 @foreach($categoryPosts->skip(1)->take(3) as $post)
                     <a href="{{ route('post.show', $post->slug) }}" class="group block relative rounded-xl overflow-hidden aspect-[16/9]">
                         <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}"
-                             class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                             class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                             style="object-position: {{ $post->featured_image_position ?? 'center' }}">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                         <div class="absolute bottom-0 left-0 right-0 p-4">
                             <h4 class="text-sm font-bold text-white leading-snug group-hover:text-blue-300 transition">{{ Str::limit($post->title, 80) }}</h4>
@@ -236,6 +240,7 @@
                         <iframe src="https://www.youtube.com/embed/{{ $video->youtube_id }}" class="w-full h-full" allowfullscreen loading="lazy"></iframe>
                     @else
                         <img src="{{ $video->featured_image_url }}" alt="{{ $video->title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                             style="object-position: {{ $video->featured_image_position ?? 'center' }}"
                              onerror="this.onerror=null;this.src='{{ asset('images/no-image.svg') }}'">
                     @endif
                 </div>

@@ -110,6 +110,7 @@
                 <figure class="mb-8">
                     <img src="{{ $post->featured_image_url }}" alt="{{ $post->title }}"
                          class="w-full rounded-xl object-cover aspect-[16/9]"
+                         style="object-position: {{ $post->featured_image_position ?? 'center' }}"
                          onerror="this.onerror=null;this.src='{{ asset('images/no-image.svg') }}'">
                     @if($post->image_caption)
                         <figcaption class="text-center text-sm text-gray-500 mt-2 italic">{{ $post->image_caption }}</figcaption>

@@ -86,6 +86,7 @@ class PostController extends Controller
             'meta_description' => 'nullable|string|max:500',
             'meta_keywords' => 'nullable|string|max:255',
             'og_image' => 'nullable|image|max:2048',
+            'featured_image_position' => 'nullable|in:top,center,bottom',
             'is_trending' => 'nullable|boolean',
             'is_breaking' => 'nullable|boolean',
             'is_highlight' => 'nullable|boolean',
@@ -104,6 +105,8 @@ class PostController extends Controller
         if ($validated['status'] === 'published') {
             $validated['published_at'] = now();
         }
+
+        $validated['featured_image_position'] = $validated['featured_image_position'] ?? 'center';
 
         $tags = collect($validated['tags'] ?? []);
         unset($validated['tags']);
@@ -160,6 +163,7 @@ class PostController extends Controller
             'meta_description' => 'nullable|string|max:500',
             'meta_keywords' => 'nullable|string|max:255',
             'og_image' => 'nullable|image|max:2048',
+            'featured_image_position' => 'nullable|in:top,center,bottom',
             'is_trending' => 'nullable|boolean',
             'is_breaking' => 'nullable|boolean',
             'is_highlight' => 'nullable|boolean',
@@ -195,6 +199,7 @@ class PostController extends Controller
         }
 
         $validated['reading_time'] = max(1, ceil(str_word_count(strip_tags($validated['content'])) / 200));
+        $validated['featured_image_position'] = $validated['featured_image_position'] ?? 'center';
 
         $post->update($validated);
         $post->tags()->sync($tags);

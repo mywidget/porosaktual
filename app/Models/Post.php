@@ -30,6 +30,7 @@ class Post extends Model
         'excerpt',
         'content',
         'featured_image',
+        'featured_image_position',
         'author_id',
         'category_id',
         'status',
