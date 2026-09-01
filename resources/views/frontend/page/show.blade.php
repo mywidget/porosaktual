@@ -1,6 +1,6 @@
 @extends('layouts.frontend')
 
-@section('title', ($page->meta_title ?? $page->title) . ' - ' . config('app.name'))
+@section('title', ($page->meta_title ?? $page->title) . ' - ' . ($settings['site_name'] ?? config('app.name')))
 
 @push('meta')
     @if($page->meta_description)

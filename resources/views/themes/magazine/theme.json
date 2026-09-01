@@ -1,0 +1,11 @@
+{
+    "name": "Magazine",
+    "description": "Tema gaya majalah — layout grid newspaper, warna gelap dengan aksen emas.",
+    "author": "Poros Aktual",
+    "version": "1.0.0",
+    "colors": {
+        "primary": "#D97706",
+        "secondary": "#92400E",
+        "accent": "#F59E0B"
+    }
+}

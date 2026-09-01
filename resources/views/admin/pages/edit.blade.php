@@ -3,7 +3,7 @@
 @section('title', 'Edit Halaman')
 
 @section('content')
-<form method="POST" action="{{ route('admin.pages.update', $page) }}" enctype="multipart/form-data">
+<form id="page-form" method="POST" action="{{ route('admin.pages.update', $page) }}" enctype="multipart/form-data">
     @csrf
     @method('PUT')
 
@@ -153,13 +153,19 @@
             quill.root.innerHTML = contentHidden.value;
         }
 
-        document.querySelector('form').addEventListener('submit', function() {
+        quill.on('text-change', function() {
             contentHidden.value = quill.root.innerHTML;
         });
 
+        const form = document.getElementById('page-form');
+        if (form) {
+            form.addEventListener('submit', function() {
+                contentHidden.value = quill.root.innerHTML;
+            });
+        }
+
         const titleInput = document.getElementById('title');
         const slugInput = document.getElementById('slug');
-        const originalSlug = slugInput.value;
         let slugManuallyEdited = false;
 
         slugInput.addEventListener('input', function() {

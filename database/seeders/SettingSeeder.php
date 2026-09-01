@@ -35,6 +35,18 @@ class SettingSeeder extends Seeder
             ['key' => 'seo_meta_description', 'value' => 'Portal berita terkini Indonesia. Temukan berita politik, nasional, ekonomi, teknologi, olahraga, dan lifestyle terbaru.', 'group' => 'seo'],
             ['key' => 'seo_meta_keywords', 'value' => 'berita, news, Indonesia, terkini, politik, nasional, ekonomi, teknologi, olahraga, lifestyle', 'group' => 'seo'],
             ['key' => 'seo_og_image', 'value' => null, 'group' => 'seo'],
+
+            // Route prefixes (WordPress-style)
+            ['key' => 'route_post_prefix', 'value' => 'news', 'group' => 'routes'],
+            ['key' => 'route_category_prefix', 'value' => 'kategori', 'group' => 'routes'],
+            ['key' => 'route_tag_prefix', 'value' => 'tag', 'group' => 'routes'],
+            ['key' => 'route_author_prefix', 'value' => 'penulis', 'group' => 'routes'],
+            ['key' => 'route_page_prefix', 'value' => 'page', 'group' => 'routes'],
+            ['key' => 'route_search_prefix', 'value' => 'pencarian', 'group' => 'routes'],
+            ['key' => 'route_video_prefix', 'value' => 'video', 'group' => 'routes'],
+
+            // Comment settings
+            ['key' => 'comment_enabled', 'value' => '1', 'group' => 'general'],
         ];
 
         foreach ($settings as $setting) {

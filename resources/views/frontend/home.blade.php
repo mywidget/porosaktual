@@ -1,6 +1,6 @@
 @extends('layouts.frontend')
 
-@section('title', $settings['seo_meta_title'] ?? config('app.name', 'Poros Aktual') . ' - Portal Berita Terpercaya')
+@section('title', $settings['seo_meta_title'] ?? ($settings['site_name'] ?? config('app.name', 'Poros Aktual')) . ' - Portal Berita Terpercaya')
 
 @push('meta')
     <meta name="description" content="{{ $settings['seo_meta_description'] ?? 'Portal berita terkini Indonesia. Temukan berita politik, nasional, ekonomi, teknologi, olahraga, dan lifestyle terbaru.' }}">

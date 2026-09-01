@@ -24,7 +24,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
     @endif
     @stack('meta')
-    <title>@yield('title', config('app.name', 'Poros Aktual'))</title>
+    <title>@yield('title', $settings['site_name'] ?? config('app.name', 'Poros Aktual'))</title>
     <style>
         [x-cloak] { display: none !important; }
         .ticker-wrap {

@@ -1,0 +1,11 @@
+{
+    "name": "Default",
+    "description": "Theme default Portal Berita Poros Aktual — bersih, modern, responsif.",
+    "author": "Poros Aktual",
+    "version": "1.0.0",
+    "colors": {
+        "primary": "#2563EB",
+        "secondary": "#1E40AF",
+        "accent": "#3B82F6"
+    }
+}

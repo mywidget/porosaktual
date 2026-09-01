@@ -23,35 +23,110 @@ use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\BreakingNewsController;
+use App\Http\Controllers\Admin\RouteSettingController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Route;
 
+// Helper: resolve route prefix from settings
+$rp = function (string $type, string $default = ''): string {
+    try {
+        $settings = cache()->remember('all_settings', 3600, fn () => Setting::pluck('value', 'key')->toArray());
+        return trim($settings["route_{$type}_prefix"] ?? $default, '/');
+    } catch (\Exception $e) {
+        return $default;
+    }
+};
+
+$postPrefix      = $rp('post', 'news');
+$categoryPrefix  = $rp('category', 'kategori');
+$tagPrefix       = $rp('tag', 'tag');
+$authorPrefix    = $rp('author', 'penulis');
+$pagePrefix      = $rp('page', 'page');
+$searchPrefix    = $rp('search', 'pencarian');
+$videoPrefix     = $rp('video', 'video');
+
+// ==========================================
 // Frontend Routes
+// ==========================================
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/news/{slug}', [PostController::class, 'show'])->name('post.show');
-Route::get('/kategori/{slug}', [CategoryController::class, 'show'])->name('category.show');
-Route::get('/tag/{slug}', [TagController::class, 'show'])->name('tag.show');
-Route::get('/pencarian', [SearchController::class, 'search'])->name('search.search');
+
+// === Specific routes FIRST (before catch-all) ===
+
+// Category
+if ($categoryPrefix) {
+    Route::get("/{$categoryPrefix}/{slug}", [CategoryController::class, 'show'])->name('category.show');
+}
+
+// Tag
+if ($tagPrefix) {
+    Route::get("/{$tagPrefix}/{slug}", [TagController::class, 'show'])->name('tag.show');
+}
+
+// Author
+if ($authorPrefix) {
+    Route::get("/{$authorPrefix}/{slug}", [AuthorController::class, 'show'])->name('author.show');
+}
+
+// Page
+if ($pagePrefix) {
+    Route::get("/{$pagePrefix}/{slug}", [PageController::class, 'show'])->name('page.show');
+}
+
+// Search
+if ($searchPrefix) {
+    Route::get("/{$searchPrefix}", [SearchController::class, 'search'])->name('search.search');
+} else {
+    Route::get("/search", [SearchController::class, 'search'])->name('search.search');
+}
+
+// Video
+if ($videoPrefix) {
+    Route::get("/{$videoPrefix}", [VideoController::class, 'index'])->name('video.index');
+} else {
+    Route::get("/videos", [VideoController::class, 'index'])->name('video.index');
+}
+
 Route::get('/pencarian/ajax', [SearchController::class, 'searchAjax'])->name('search.ajax');
-Route::get('/penulis/{slug}', [AuthorController::class, 'show'])->name('author.show');
-Route::get('/video', [VideoController::class, 'index'])->name('video.index');
-Route::get('/page/{slug}', [PageController::class, 'show'])->name('page.show');
+
+// Comment
 Route::post('/komentar', [CommentController::class, 'store'])->name('comment.store');
+
+// Sitemap & RSS
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/news-sitemap.xml', [SitemapController::class, 'news'])->name('sitemap.news');
 Route::get('/feed', [RssController::class, 'index'])->name('rss');
 
-// Auth Routes (Breeze)
+// ==========================================
+// Auth Routes
+// ==========================================
 require __DIR__.'/auth.php';
 
-// Profile Routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// === Post detail — dynamic prefix ===
+if ($postPrefix) {
+    Route::get("/{$postPrefix}/{slug}", [PostController::class, 'show'])->name('post.show');
+}
+
+// ==========================================
+// Auth Routes
+// ==========================================
+require __DIR__.'/auth.php';
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// ==========================================
 // Admin Routes
+// ==========================================
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/views-data', [DashboardController::class, 'viewsData'])->name('dashboard.views-data');
@@ -103,6 +178,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::get('settings/website', [SettingController::class, 'website'])->name('settings.website');
         Route::get('settings/social', [SettingController::class, 'social'])->name('settings.social');
         Route::get('settings/analytics', [SettingController::class, 'analytics'])->name('settings.analytics');
+
+        // Route Settings
+        Route::get('settings/routes', [RouteSettingController::class, 'index'])->name('settings.routes');
+        Route::post('settings/routes', [RouteSettingController::class, 'update'])->name('settings.routes.update');
     });
 
     Route::middleware('permission:manage-breaking-news')->group(function () {
@@ -110,3 +189,16 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::post('breaking-news/{breaking_news}/toggle', [BreakingNewsController::class, 'toggle'])->name('breaking-news.toggle');
     });
 });
+
+// ==========================================
+// Catch-all slug route — ABSOLUTELY LAST
+// ==========================================
+if ($postPrefix) {
+    Route::get("/{slug}", [PostController::class, 'show'])
+        ->name('post.show.alt')
+        ->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*');
+} else {
+    Route::get("/{slug}", [PostController::class, 'show'])
+        ->name('post.show')
+        ->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*');
+}
