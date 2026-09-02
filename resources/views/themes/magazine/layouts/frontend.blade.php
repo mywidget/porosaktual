@@ -47,11 +47,11 @@
             </div>
             <div class="flex items-center gap-3">
                 @auth
-                    <a href="{{ route('admin.dashboard') }}" class="hover:text-amber-400 transition">Admin</a>
+                    <a href="{{ route('admin.dashboard') }}" class="hidden sm:inline hover:text-amber-400 transition">Admin</a>
                 @else
-                    <a href="{{ route('login') }}" class="hover:text-amber-400 transition">Masuk</a>
+                    <a href="{{ route('login') }}" class="hidden sm:inline hover:text-amber-400 transition">Masuk</a>
                 @endauth
-                <button @click="toggle()" class="hover:text-amber-400 transition">
+                <button @click="toggle()" class="hidden sm:inline hover:text-amber-400 transition">
                     <template x-if="!dark">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
                     </template>
@@ -64,54 +64,109 @@
     </div>
 
     {{-- Masthead --}}
-    <header class="bg-white dark:bg-stone-800 border-b-4 border-amber-600">
-        <div class="max-w-7xl mx-auto px-4 py-6 text-center">
-            @if(!empty($settings['site_logo']))
-                <a href="{{ route('home') }}">
-                    <img src="{{ asset('storage/' . $settings['site_logo']) }}" alt="{{ $settings['site_name'] ?? config('app.name') }}" class="h-12 mx-auto">
-                </a>
-            @else
-                <a href="{{ route('home') }}" class="text-3xl md:text-4xl font-bold tracking-tight text-stone-900 dark:text-white uppercase">
-                    {{ $settings['site_name'] ?? config('app.name') }}
-                </a>
-            @endif
-            <p class="text-stone-500 dark:text-stone-400 text-sm mt-1 italic">{{ $settings['site_description'] ?? '' }}</p>
-        </div>
-    </header>
+    <header class="bg-white dark:bg-stone-800 border-b-4 border-amber-600" x-data="{ mobileMenu: false }">
+        <div class="max-w-7xl mx-auto px-4 py-4 md:py-6">
+            <div class="flex items-center justify-between">
+                {{-- Logo --}}
+                <div class="flex-1">
+                    @if(!empty($settings['site_logo']))
+                        <a href="{{ route('home') }}">
+                            <img src="{{ asset('storage/' . $settings['site_logo']) }}" alt="{{ $settings['site_name'] ?? config('app.name') }}" class="h-10 md:h-12">
+                        </a>
+                    @else
+                        <a href="{{ route('home') }}" class="text-2xl md:text-4xl font-bold tracking-tight text-stone-900 dark:text-white uppercase">
+                            {{ $settings['site_name'] ?? config('app.name') }}
+                        </a>
+                    @endif
+                </div>
 
-    {{-- Navigation --}}
-    <nav class="bg-stone-800 dark:bg-stone-950 text-white sticky top-0 z-50 shadow-lg" x-data="{ open: false }">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex items-center justify-between h-11">
+                {{-- Hamburger Menu (Mobile) --}}
+                <button @click="mobileMenu = !mobileMenu" class="md:hidden p-2 text-stone-700 dark:text-stone-300 hover:text-amber-600 transition">
+                    <svg x-show="!mobileMenu" class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    <svg x-show="mobileMenu" x-cloak class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+
+                {{-- Desktop Menu --}}
                 <div class="hidden md:flex items-center space-x-1">
-                    <a href="{{ route('home') }}" class="px-3 py-2 text-sm font-medium hover:bg-stone-700 rounded transition uppercase tracking-wider">Home</a>
+                    <a href="{{ route('home') }}" class="px-3 py-2 text-sm font-medium hover:bg-stone-700 hover:text-amber-400 rounded transition uppercase tracking-wider">Home</a>
                     @foreach($headerMenus as $item)
                         <a href="{{ $item->url ?: ($item->post ? post_url($item->post) : '#') }}"
-                           class="px-3 py-2 text-sm font-medium hover:bg-stone-700 rounded transition uppercase tracking-wider">
+                           class="px-3 py-2 text-sm font-medium hover:bg-stone-700 hover:text-amber-400 rounded transition uppercase tracking-wider">
                             {{ $item->name }}
                         </a>
                     @endforeach
                 </div>
-                <div class="flex items-center gap-2">
-                    @foreach($categories as $cat)
-                        @if($loop->index < 5)
-                            <a href="{{ category_url($cat) }}" class="hidden lg:inline-block px-2 py-1 text-xs bg-amber-600 hover:bg-amber-700 text-white rounded transition uppercase tracking-wider">{{ $cat->name }}</a>
-                        @endif
-                    @endforeach
-                </div>
-                <button @click="open = !open" class="md:hidden p-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                </button>
             </div>
         </div>
-        <div x-show="open" x-transition class="md:hidden bg-stone-700 border-t border-stone-600">
+
+        {{-- Mobile Menu Dropdown --}}
+        <div x-show="mobileMenu" x-cloak
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-2"
+             class="md:hidden bg-white dark:bg-stone-800 border-t border-stone-200 dark:border-stone-700 shadow-lg">
             <div class="px-4 py-3 space-y-1">
-                <a href="{{ route('home') }}" class="block px-3 py-2 text-sm rounded hover:bg-stone-600">Home</a>
+                {{-- Search --}}
+                <form action="{{ route('search.search') }}" method="GET" class="mb-3">
+                    <div class="flex">
+                        <input type="text" name="q" placeholder="Cari berita..." class="flex-1 px-3 py-2 text-sm border border-stone-300 dark:border-stone-600 dark:bg-stone-700 dark:text-white rounded-l focus:outline-none focus:border-amber-500">
+                        <button type="submit" class="px-3 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-r transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        </button>
+                    </div>
+                </form>
+
+                {{-- Dark Mode Toggle --}}
+                <button @click="toggle()" class="flex items-center w-full px-3 py-2.5 text-sm font-medium rounded hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-stone-700 transition">
+                    <template x-if="!dark">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                    </template>
+                    <template x-if="dark">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    </template>
+                    <span x-text="dark ? 'Mode Terang' : 'Mode Gelap'"></span>
+                </button>
+
+                <div class="border-t border-stone-200 dark:border-stone-700 my-2"></div>
+
+                {{-- Auth Links --}}
+                @auth
+                    <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2.5 text-sm font-medium rounded hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-stone-700 transition">Admin</a>
+                @else
+                    <a href="{{ route('login') }}" class="block px-3 py-2.5 text-sm font-medium rounded hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-stone-700 transition">Masuk</a>
+                @endauth
+
+                <div class="border-t border-stone-200 dark:border-stone-700 my-2"></div>
+
+                {{-- Menu Links --}}
+                <a href="{{ route('home') }}" class="block px-3 py-2.5 text-sm font-medium rounded hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-stone-700 transition">Home</a>
                 @foreach($headerMenus as $item)
-                    <a href="{{ $item->url ?: ($item->post ? post_url($item->post) : '#') }}" class="block px-3 py-2 text-sm rounded hover:bg-stone-600">{{ $item->name }}</a>
+                    <a href="{{ $item->url ?: ($item->post ? post_url($item->post) : '#') }}" class="block px-3 py-2.5 text-sm font-medium rounded hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-stone-700 transition">{{ $item->name }}</a>
                 @endforeach
+
+                <div class="border-t border-stone-200 dark:border-stone-700 my-2"></div>
+
+                {{-- Categories --}}
                 @foreach($categories as $cat)
-                    <a href="{{ category_url($cat) }}" class="block px-3 py-2 text-sm rounded hover:bg-stone-600">{{ $cat->name }}</a>
+                    <a href="{{ category_url($cat) }}" class="block px-3 py-2.5 text-sm font-medium rounded hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-stone-700 transition">{{ $cat->name }}</a>
+                @endforeach
+            </div>
+        </div>
+    </header>
+
+    {{-- Category Bar (Desktop) --}}
+    <nav class="hidden md:block bg-stone-800 dark:bg-stone-950 text-white sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center h-11 overflow-x-auto">
+                @foreach($categories as $cat)
+                    <a href="{{ category_url($cat) }}" class="flex-shrink-0 px-3 py-2 text-xs font-medium bg-amber-600 hover:bg-amber-700 text-white rounded transition uppercase tracking-wider">{{ $cat->name }}</a>
                 @endforeach
             </div>
         </div>
@@ -163,24 +218,29 @@
                 <div>
                     <h4 class="text-white font-bold uppercase tracking-wider text-sm mb-3 magazine-border inline-block pb-1">Ikuti Kami</h4>
                     <div class="flex gap-3">
-                        @if(!empty($settings['facebook_url']))
-                            <a href="{{ $settings['facebook_url'] }}" target="_blank" class="w-9 h-9 bg-stone-700 hover:bg-blue-600 rounded-full flex items-center justify-center transition">
+                        @if(!empty($settings['social_facebook']))
+                            <a href="{{ $settings['social_facebook'] }}" target="_blank" class="w-9 h-9 bg-stone-700 hover:bg-blue-600 rounded-full flex items-center justify-center transition">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                             </a>
                         @endif
-                        @if(!empty($settings['twitter_url']))
-                            <a href="{{ $settings['twitter_url'] }}" target="_blank" class="w-9 h-9 bg-stone-700 hover:bg-sky-500 rounded-full flex items-center justify-center transition">
+                        @if(!empty($settings['social_twitter']))
+                            <a href="{{ $settings['social_twitter'] }}" target="_blank" class="w-9 h-9 bg-stone-700 hover:bg-sky-500 rounded-full flex items-center justify-center transition">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                             </a>
                         @endif
-                        @if(!empty($settings['instagram_url']))
-                            <a href="{{ $settings['instagram_url'] }}" target="_blank" class="w-9 h-9 bg-stone-700 hover:bg-pink-600 rounded-full flex items-center justify-center transition">
+                        @if(!empty($settings['social_instagram']))
+                            <a href="{{ $settings['social_instagram'] }}" target="_blank" class="w-9 h-9 bg-stone-700 hover:bg-pink-600 rounded-full flex items-center justify-center transition">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
                             </a>
                         @endif
-                        @if(!empty($settings['youtube_url']))
-                            <a href="{{ $settings['youtube_url'] }}" target="_blank" class="w-9 h-9 bg-stone-700 hover:bg-red-600 rounded-full flex items-center justify-center transition">
+                        @if(!empty($settings['social_youtube']))
+                            <a href="{{ $settings['social_youtube'] }}" target="_blank" class="w-9 h-9 bg-stone-700 hover:bg-red-600 rounded-full flex items-center justify-center transition">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                            </a>
+                        @endif
+                        @if(!empty($settings['social_tiktok']))
+                            <a href="{{ $settings['social_tiktok'] }}" target="_blank" class="w-9 h-9 bg-stone-700 hover:bg-stone-600 rounded-full flex items-center justify-center transition">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
                             </a>
                         @endif
                     </div>
