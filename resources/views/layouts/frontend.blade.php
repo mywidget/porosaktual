@@ -32,7 +32,7 @@
             width: max-content;
         }
         .animate-ticker {
-            animation: ticker-scroll 20s linear infinite;
+            animation: ticker-scroll 60s linear infinite;
         }
         .group:hover .animate-ticker {
             animation-play-state: paused;
